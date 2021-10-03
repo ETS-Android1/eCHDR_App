@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dhis2 Skeleton App</string>
     <!-- Strings related to login -->
@@ -88,4 +89,94 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="filter_background">filterBackground</string>
+
+    <!--<string name="app_name">Yashodhara</string> -->
+    <string name="login_title">CHDR Data Extraction</string>
+    <string name="login_description">Log in to your CHDR Data Extraction Account</string>
+    <string name="username"><font size="14">Username</font></string>
+    <string name="password"><font size="14">Password</font></string>
+    <string name="login">Login</string>
+
+    <!--    home-->
+    <string name="title_activity_home">home</string>
+    <string name="wish">Hello,</string>
+    <string name="sup_prog">Supplementary \nFeeding Programme</string>
+    <string name="thera_prog">Therapeutic Feeding \nProgramme</string>
+    <string name="overw_prog">Overweight/Obesity \nProgramme</string>
+    <string name="stunt_prog">Stunting \nProgramme</string>
+    <string name="other_prog">Other Health/ \nNon-health</string>
+    <string name="area_details">View my area details</string>
+    <string name="area_details_desc">Lorem ipsum dolor sit amet, consetetur</string>
+    <string name="new_child">Add new child</string>
+    <string name="new_child_desc">Lorem ipsum dolor sit amet, consetetur</string>
+    <string name="all_reg">All registrations</string>
+
+    <!--    demographic info-->
+    <string name="demo_info_title">Demographic information</string>
+    <string name="date_of_reg"><font size="14">Date of registration</font></string>
+    <string name="gn_area"><font size="14">GN area</font></string>
+    <string name="birth_num"><font size="12">Birth and immunization \nRegistration number</font></string>
+    <string name="name"><font size="12">Name of the child</font></string>
+    <string name="sex"><font size="12">Sex</font></string>
+    <string name="date_of_birth"><font size="12">Date of birth</font></string>
+    <string name="ethnicity"><font size="12">Ethnicity</font></string>
+    <string name="addr"><font size="12">Address</font></string>
+    <string name="sector"><font size="12">Sector</font></string>
+    <string name="ll_num"><font size="12">Land line number</font></string>
+    <string name="mob_num"><font size="12">Mobile number</font></string>
+
+    <!--    mother info-->
+    <string name="mother_info_title">Mother\'s information</string>
+    <string name="occup_mother"><font size="12">Occupation</font></string>
+    <string name="name_mother"><font size="12">Name of the mother</font></string>
+    <string name="date_of_birth_mother"><font size="12">Mother\'s date of birth</font></string>
+    <string name="no_of_children"><font size="12">Number of living children including this child</font></string>
+    <string name="edu_level_mother"><font size="12">Highest education level</font></string>
+    <string name="nic_mother"><font size="12">NIC number</font></string>
+
+    <!--    caregiver's info-->
+    <string name="caregiver_title">Care giver\'s information</string>
+    <string name="cg_rel"><font size="12">Caregiver\'s relationship to child</font></string>
+    <string name="cg_name"><font size="12">If caregiver is not the mother, caregiver\'s mame</font></string>
+    <string name="newborn_title">Newborn\'s information</string>
+    <string name="birth_len"><font size="12">Length at birth (cm)</font></string>
+    <string name="birth_weight"><font size="12">Birth weight (grams)</font></string>
+    <string name="submit">Submit</string>
+
+    <!--    anthropometry programme-->
+    <string name="an_title">Anthropometry Programme</string>
+    <string name="an_stage">Stage 1 : Anthropometry</string>
+    <string name="an_date_enrol"><font size="12">ate of enrollment</font></string>
+    <string name="an_date"><font size="12">Date</font></string>
+    <string name="an_weight"><font size="12">Weight (grams)</font></string>
+    <string name="an_length"><font size="12">Length/ Height (cm)</font></string>
+    <string name="an_measures_title">Anthropometric measures</string>
+    <string name="save">Save</string>
+
+    <!--    child details-->
+    <string name="cd_title">Child details</string>
+    <string name="cd_name"><font size="12">Child name</font></string>
+    <string name="cd_no"><font size="12">Birth and immunization \nRegistration number</font></string>
+    <string name="cd_dob"><font size="12">Date of birth</font></string>
+    <string name="cd_gender"><font size="12">Gender</font></string>
+    <string name="cd_aep">Already enrolled programmes</string>
+    <string name="cd_nep">Not enrolled programmes</string>
+
+    <!--    history-->
+    <string name="search"><font size="14">Search here</font></string>
+    <string name="search_btn"><font size="14">Search</font></string>
+
+    <!--    area details-->
+    <string name="ad_title">View my area details</string>
+    <string name="ad_area"><font size="12">Midwife area</font></string>
+    <string name="ad_search"><font size="12">Midwife area</font></string>
+    <string name="ad_sort"><font size="13">Sort by</font></string>
+    <string name="ad_search_result">Search here</string>
+
+    <string name="anthropometry">Anthropometry</string>
+    <string name="supplementary">Supplementary</string>
+    <string name="overweight">Overweight</string>
+    <string name="therapeutic">Therapeutic feeding</string>
+    <string name="stunt">Stunting</string>
+    <string name="other">Other health/ Non-health</string>
 </resources>
