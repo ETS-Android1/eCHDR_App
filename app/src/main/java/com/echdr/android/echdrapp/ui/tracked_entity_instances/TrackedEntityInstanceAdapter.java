@@ -8,11 +8,13 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.paging.DataSource;
 import androidx.paging.PagedListAdapter;
 
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
+import com.echdr.android.echdrapp.data.service.ActivityStarter;
 import com.echdr.android.echdrapp.data.service.DateFormatHelper;
 import com.echdr.android.echdrapp.ui.base.DiffByIdItemCallback;
 import com.echdr.android.echdrapp.ui.base.ListItemWithSyncHolder;
@@ -42,10 +44,12 @@ import static com.echdr.android.echdrapp.data.service.StyleBinderHelper.setState
 
 public class TrackedEntityInstanceAdapter extends PagedListAdapter<TrackedEntityInstance, ListItemWithSyncHolder> {
 
+    private final AppCompatActivity activity;
     private DataSource<?, TrackedEntityInstance> source;
 
-    public TrackedEntityInstanceAdapter() {
+    public TrackedEntityInstanceAdapter(AppCompatActivity activity) {
         super(new DiffByIdItemCallback<>());
+        this.activity = activity;
     }
 
     @NonNull
@@ -104,8 +108,24 @@ public class TrackedEntityInstanceAdapter extends PagedListAdapter<TrackedEntity
             holder.sync.setOnClickListener(null);
         }
         setBackgroundColor(R.color.colorAccentDark, holder.icon);
+
         setState(trackedEntityInstance.state(), holder.syncIcon);
         setConflicts(trackedEntityInstance.uid(), holder);
+
+        holder.itemView.setOnClickListener(view -> {
+            ActivityStarter.startActivity(
+                    activity,
+                    ChildDetailsActivity.getTrackedEntityInstancesActivityIntent(
+                            activity,
+                            trackedEntityInstance.uid()
+                    ),false
+            );
+            //System.out.println(trackedEntityInstance.uid());
+
+            // menna methana tama thana
+
+        });
+
     }
 
     private Observable<D2Progress> syncTei(String teiUid) {

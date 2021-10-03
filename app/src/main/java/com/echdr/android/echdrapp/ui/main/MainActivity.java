@@ -119,10 +119,12 @@ public class MainActivity extends AppCompatActivity{
                 SyncStatusHelper.therapeuticalCount()));
 
         myAreaDetailsBtn.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View v) {
-                Toast t = Toast.makeText(context, "Clicked my area details", Toast.LENGTH_LONG);
-                t.show();
+            public void onClick(View view) {
+                Intent searchAreaDetails = new Intent(getApplicationContext(), TrackedEntityInstancesActivity.class);
+                startActivity(searchAreaDetails);
+
             }
         });
 
@@ -132,8 +134,11 @@ public class MainActivity extends AppCompatActivity{
                 Toast t = Toast.makeText(context, "Clicked add new child", Toast.LENGTH_LONG);
                 t.show();
 
+                /*
                 Intent intent = EventsActivity.getIntent(context, "hM6Yt9FQL0n", "qj5r3gSwIww");
                 startActivity(intent);
+                tharaka's line
+                 */
 
 
             }

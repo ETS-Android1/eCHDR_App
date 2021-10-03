@@ -40,6 +40,9 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name="com.echdr.android.echdrapp.ui.tracked_entity_instances.ChildDetailsActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name="com.echdr.android.echdrapp.ui.programs.ProgramsActivity"
             android:label="@string/title_activity_programs"
             android:theme="@style/AppTheme.NoActionBar" />

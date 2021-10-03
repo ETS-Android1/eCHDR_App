@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -32,27 +33,28 @@ public class TrackedEntityInstancesActivity extends ListActivity {
     private final int ENROLLMENT_RQ = 1210;
     private TrackedEntityInstanceAdapter adapter;
 
+
     private enum IntentExtra {
-        PROGRAM
+        TRACKED_ENTITY_INSTANCE
     }
 
-    public static Intent getTrackedEntityInstancesActivityIntent(Context context, String program) {
+    public static Intent getTrackedEntityInstancesActivityIntent(Context context, String trackedEntityInstanceUid) {
         Intent intent = new Intent(context, TrackedEntityInstancesActivity.class);
-        intent.putExtra(IntentExtra.PROGRAM.name(), program);
+        intent.putExtra(IntentExtra.TRACKED_ENTITY_INSTANCE.name(), trackedEntityInstanceUid);
         return intent;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesToolbar,
-                R.id.trackedEntityInstancesRecyclerView);
-        selectedProgram = getIntent().getStringExtra(IntentExtra.PROGRAM.name());
+        setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
         compositeDisposable = new CompositeDisposable();
         observeTrackedEntityInstances();
-
+/*
         if (isEmpty(selectedProgram))
             findViewById(R.id.enrollmentButton).setVisibility(View.GONE);
+
+
 
         findViewById(R.id.enrollmentButton).setOnClickListener(view -> compositeDisposable.add(
                 Sdk.d2().programModule().programs().uid(selectedProgram).get()
@@ -69,7 +71,7 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                                 teiUid,
                                 selectedProgram,
                                 Sdk.d2().organisationUnitModule().organisationUnits().one().blockingGet().uid()
-                                ))
+                        ))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -79,31 +81,42 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                                 Throwable::printStackTrace
                         )
         ));
+
+ */
     }
 
+
+
     private void observeTrackedEntityInstances() {
-        adapter = new TrackedEntityInstanceAdapter();
+        adapter = new TrackedEntityInstanceAdapter(this);
         recyclerView.setAdapter(adapter);
 
-        getTeiRepository().getPaged(20).observe(this, trackedEntityInstancePagedList -> {
-            adapter.setSource(trackedEntityInstancePagedList.getDataSource());
-            adapter.submitList(trackedEntityInstancePagedList);
-            findViewById(R.id.trackedEntityInstancesNotificator).setVisibility(
-                    trackedEntityInstancePagedList.isEmpty() ? View.VISIBLE : View.GONE);
-        });
+        try {
+            getTeiRepository().getPaged(20).observe(this, trackedEntityInstancePagedList -> {
+                adapter.setSource(trackedEntityInstancePagedList.getDataSource());
+                adapter.submitList(trackedEntityInstancePagedList);
+            });
+        }
+        catch(Exception e){
+            setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
+        }
+        //findViewById(R.id.trackedEntityInstancesNotificator).setVisibility(
+        //      trackedEntityInstancePagedList.isEmpty() ? View.VISIBLE : View.GONE);
+
     }
 
     private TrackedEntityInstanceCollectionRepository getTeiRepository() {
-        TrackedEntityInstanceCollectionRepository teiRepository =
-                Sdk.d2().trackedEntityModule().trackedEntityInstances().withTrackedEntityAttributeValues();
-        if (!isEmpty(selectedProgram)) {
-            List<String> programUids = new ArrayList<>();
-            programUids.add(selectedProgram);
-            return teiRepository.byProgramUids(programUids);
-        } else {
-            return teiRepository;
+        TrackedEntityInstanceCollectionRepository teiRepository = null;
+        try{
+            teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances().withTrackedEntityAttributeValues();
         }
+        catch (Exception e){
+            Toast.makeText(this, "This data is partially filled", Toast.LENGTH_LONG).show();
+        }
+
+        return teiRepository;
     }
+
 
     @Override
     protected void onDestroy() {
@@ -116,8 +129,10 @@ public class TrackedEntityInstancesActivity extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == ENROLLMENT_RQ && resultCode == RESULT_OK){
-                adapter.invalidateSource();
+            adapter.invalidateSource();
         }
         super.onActivityResult(requestCode,resultCode,data);
     }
+
+
 }

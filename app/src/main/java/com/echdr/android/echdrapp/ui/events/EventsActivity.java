@@ -59,7 +59,7 @@ public class EventsActivity extends ListActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setUp(R.layout.activity_events, R.id.eventsToolbar, R.id.eventsRecyclerView);
+        setUp(R.layout.activity_events, R.id.eventsRecyclerView);
         selectedProgram = getIntent().getStringExtra(IntentExtra.PROGRAM.name());
         selectedChild = getIntent().getStringExtra(IntentExtra.TEI_ID.name());
         compositeDisposable = new CompositeDisposable();

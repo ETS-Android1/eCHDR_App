@@ -36,7 +36,7 @@ public class ProgramsActivity extends ListActivity implements OnProgramSelection
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setUp(R.layout.activity_programs, R.id.programsToolbar, R.id.programsRecyclerView);
+        setUp(R.layout.activity_programs, R.id.programsRecyclerView);
         observePrograms();
     }
 

@@ -63,7 +63,7 @@ public class TrackedEntityInstanceSearchActivity extends ListWithoutBindingsActi
         notificator = findViewById(R.id.dataNotificator);
         progressBar = findViewById(R.id.trackedEntityInstanceProgressBar);
         FloatingActionButton downloadButton = findViewById(R.id.downloadDataButton);
-
+/*
         searchFormAdapter = new SearchFormAdapter((fieldUid, value) -> {
             if (fieldUid.equals("Attribute")) {
                 savedAttribute = value;
@@ -75,9 +75,13 @@ public class TrackedEntityInstanceSearchActivity extends ListWithoutBindingsActi
             }
         });
 
+
+
         binding.searchFormRecycler.setAdapter(searchFormAdapter);
 
         adapter = new TrackedEntityInstanceAdapter();
+
+ */
 
         downloadButton.setOnClickListener(view -> {
             view.setVisibility(View.GONE);

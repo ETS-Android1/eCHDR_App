@@ -9,12 +9,12 @@ public abstract class ListActivity extends AppCompatActivity {
 
     protected RecyclerView recyclerView;
 
-    protected void setUp(int contentViewId, int toolbarId, int recyclerViewId) {
+    protected void setUp(int contentViewId, int recyclerViewId) {
         setContentView(contentViewId);
-        Toolbar toolbar = findViewById(toolbarId);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //Toolbar toolbar = findViewById(toolbarId);
+        //setSupportActionBar(toolbar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
         recyclerView = findViewById(recyclerViewId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
