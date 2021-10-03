@@ -1,13 +1,20 @@
 package com.echdr.android.echdrapp.ui.event_form;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -24,7 +31,8 @@ import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.forms.EventFormService;
 import com.echdr.android.echdrapp.data.service.forms.FormField;
 import com.echdr.android.echdrapp.data.service.forms.RuleEngineService;
-import com.echdr.android.echdrapp.databinding.ActivityEnrollmentFormBinding;
+import com.echdr.android.echdrapp.databinding.ActivityEnrollmentFormTwoBinding;
+//import com.example.android.androidskeletonapp.databinding.ActivityEnrollmentFormTwoBinding;
 import com.echdr.android.echdrapp.ui.enrollment_form.FormAdapter;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,6 +40,8 @@ import org.hisp.dhis.android.core.arch.helpers.FileResizerHelper;
 import org.hisp.dhis.android.core.arch.helpers.FileResourceDirectoryHelper;
 import org.hisp.dhis.android.core.maintenance.D2Error;
 import org.hisp.dhis.android.core.program.ProgramIndicator;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValue;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValue;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValueObjectRepository;
 import org.hisp.dhis.rules.RuleEngine;
 import org.hisp.dhis.rules.models.RuleAction;
@@ -39,7 +49,9 @@ import org.hisp.dhis.rules.models.RuleActionHideField;
 import org.hisp.dhis.rules.models.RuleEffect;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,12 +63,20 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.text.TextUtils.isEmpty;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+
+
+import java.util.concurrent.TimeUnit;
+
 public class EventFormActivity extends AppCompatActivity {
 
     private final int CAMERA_RQ = 0;
     private final int CAMERA_PERMISSION = 0;
 
-    private ActivityEnrollmentFormBinding binding;
+    private ActivityEnrollmentFormTwoBinding binding;
     private FormAdapter adapter;
     private CompositeDisposable disposable;
     private PublishProcessor<Boolean> engineInitialization;
@@ -66,44 +86,80 @@ public class EventFormActivity extends AppCompatActivity {
     private String fieldWaitingImage;
     private String eventUid;
     private String programUid;
+    private Context context;
+    private String selectedChild;
+    private GraphView weightforage;
+    private GraphView heightforage;
+    private GraphView weightforheight;
+
 
     private enum IntentExtra {
-        EVENT_UID, PROGRAM_UID, OU_UID, TYPE
+        EVENT_UID, PROGRAM_UID, OU_UID, TYPE, TEI_ID
     }
 
     public enum FormType {
         CREATE, CHECK
     }
 
-    public static Intent getFormActivityIntent(Context context, String eventUid, String programUid,
-                                               String orgUnitUid, FormType type) {
+    public static Intent getFormActivityIntent(Context context, String eventUid,
+                                               String programUid, String orgUnitUid,
+                                               FormType type, String teiID) {
         Intent intent = new Intent(context, EventFormActivity.class);
         intent.putExtra(IntentExtra.EVENT_UID.name(), eventUid);
         intent.putExtra(IntentExtra.PROGRAM_UID.name(), programUid);
         intent.putExtra(IntentExtra.OU_UID.name(), orgUnitUid);
         intent.putExtra(IntentExtra.TYPE.name(), type.name());
+        intent.putExtra(IntentExtra.TEI_ID.name(), teiID);
         return intent;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_enrollment_form);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_enrollment_form_two);
 
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        context = this;
 
         eventUid = getIntent().getStringExtra(IntentExtra.EVENT_UID.name());
         programUid = getIntent().getStringExtra(IntentExtra.PROGRAM_UID.name());
+        selectedChild = getIntent().getStringExtra(IntentExtra.TEI_ID.name());
 
         formType = FormType.valueOf(getIntent().getStringExtra(IntentExtra.TYPE.name()));
 
         adapter = new FormAdapter(getValueListener(), getImageListener());
-        binding.buttonEnd.setOnClickListener(this::finishEnrollment);
-        binding.buttonValidate.setOnClickListener(this::evaluateProgramIndicators);
+
+        binding.buttonEndTwo.setOnClickListener(this::finishEnrollment);
+        binding.buttonValidateTwo.setOnClickListener(this::evaluateProgramIndicators);
         binding.formRecycler.setAdapter(adapter);
+
+        String Anthropometry = Sdk.d2().programModule().programs()
+                .byUid().eq(programUid)
+                .one().blockingGet().displayName();
+        if(Anthropometry.equals("Anthropometry Programme"))
+        {
+            System.out.println("Anthropometry Visibility true");
+            binding.charts.setVisibility(View.VISIBLE);
+
+            binding.charts.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast t = Toast.makeText(context, "Hello world", Toast.LENGTH_LONG);
+                    t.show();
+
+                    showCharts();
+
+                }
+            });
+        }
+
+
+        binding.title.setText(
+                Sdk.d2().programModule().programs()
+                        .byUid().eq(programUid)
+                        .one().blockingGet().name()
+        );
+
 
         engineInitialization = PublishProcessor.create();
 
@@ -313,4 +369,113 @@ public class EventFormActivity extends AppCompatActivity {
                 }
         }
     }
+
+
+    private void showCharts()
+    {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.bottomsheetlayout);
+
+        weightforage = (GraphView) dialog.findViewById(R.id.weightforage);
+        heightforage = dialog.findViewById(R.id.heightforage);
+        weightforheight = dialog.findViewById(R.id.weightforheight);
+
+        LineGraphSeries<DataPoint> weightforage_series = new LineGraphSeries<DataPoint>();
+        LineGraphSeries<DataPoint> heightforage_series  = new LineGraphSeries<DataPoint>();
+        LineGraphSeries<DataPoint>  weightforheight_series  = new LineGraphSeries<DataPoint>();
+
+        float[] height_list = new float[60];
+        float[] weight_list = new float[60];
+
+        // height repository
+        List<TrackedEntityDataValue> height = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
+                .byDataElement().eq("cDXlUgg1WiZ")
+                .blockingGet();
+
+        // weight repository
+        List<TrackedEntityDataValue> weight = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
+                .byDataElement().eq("rBRI27lvfY5")
+                .blockingGet();
+
+        // Get birthday of the child
+        TrackedEntityAttributeValue data = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
+                .byTrackedEntityInstance().eq(selectedChild)
+                .byTrackedEntityAttribute().eq("qNH202ChkV3")
+                .one().blockingGet();
+
+        System.out.println("Date of birth is " + data.value());
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
+
+
+        try {
+            Date dob = formatter2.parse(data.value());
+            System.out.println("Date of birth is " + dob);
+
+            for(int i = 0; i < height.size(); i++) {
+
+                //int k = s.compareTo(height.get(i).created());
+                long diffInMillies = Math.abs(height.get(i).created().getTime()
+                        - dob.getTime());
+                // convert to months by dividing days
+                int diff = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)/30;
+
+                height_list[diff] = Float.parseFloat(height.get(i).value());
+            }
+
+            for (int i = 0; i < weight.size(); i++) {
+                //int k = s.compareTo(height.get(i).created());
+                long diffInMillies = Math.abs(height.get(i).created().getTime()
+                        - dob.getTime());
+
+                // convert to months by dividing days
+                int diff = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)/30;
+
+                weight_list[diff] = Float.parseFloat(weight.get(i).value());
+            }
+
+            // reconstruct weight for age
+            for(int i=0; i< 60; i++)
+            {
+                weightforage_series.appendData(
+                        new DataPoint(i, weight_list[i] ), true, 60);
+            }
+
+            // reconstruct height for age
+            for(int i=0; i< 60; i++)
+            {
+                heightforage_series.appendData(
+                        new DataPoint(i, height_list[i] ), true, 60);
+            }
+
+            // reconstruct weight for height
+            /*
+            for(int i=0; i< 60; i++)
+            {
+                heightforage_series.appendData(
+                        new DataPoint(height_list[i] ,
+                                weight_list[i] ), false, 60);
+            }
+             */
+
+            weightforage.addSeries(weightforage_series);
+            heightforage.addSeries(heightforage_series);
+            //weightforheight.addSeries(weightforheight_series);
+
+            dialog.show();
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+            dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+        }catch (Exception error)
+        {
+            System.out.print( "Error in parsing date field: " +  error.toString());
+        }
+
+    }
+
+
+
 }

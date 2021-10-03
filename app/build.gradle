@@ -87,4 +87,6 @@ dependencies {
 
     releaseImplementation "com.facebook.flipper:flipper-noop:${libraries.flipper}"
 
+    implementation 'com.jjoe64:graphview:4.2.2'
+
 }

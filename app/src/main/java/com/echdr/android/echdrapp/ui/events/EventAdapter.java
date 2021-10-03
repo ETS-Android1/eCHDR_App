@@ -35,6 +35,7 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
 
     private final AppCompatActivity activity;
     private DataSource<?, Event> source;
+    private String selectedChild = "qj5r3gSwIww";
 
     public EventAdapter(AppCompatActivity activity) {
         super(new DiffByIdItemCallback<>());
@@ -79,11 +80,15 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
                             event.uid(),
                             event.program(),
                             event.organisationUnit(),
-                            EventFormActivity.FormType.CHECK
+                            EventFormActivity.FormType.CHECK,
+                            selectedChild
                     ),false
             );
         });
     }
+
+
+
 
     private OrganisationUnit orgUnit(String orgUnitUid) {
         return Sdk.d2().organisationUnitModule().organisationUnits().uid(orgUnitUid).blockingGet();
@@ -114,6 +119,7 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
                 .byTrackedEntityInstanceUid().eq(trackedEntityInstanceUid).blockingGet());
     }
 
+
     public void setSource(DataSource<?, Event> dataSource) {
         this.source = dataSource;
     }
@@ -121,4 +127,5 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
     public void invalidateSource() {
         source.invalidate();
     }
+
 }

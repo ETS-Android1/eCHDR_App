@@ -8,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -29,36 +30,33 @@ public class LoginActivity extends AppCompatActivity {
     private LoginViewModel loginViewModel;
     private Disposable disposable;
 
-    private TextInputEditText serverUrlEditText;
+    private String serverUrlEditText;
     private TextInputEditText usernameEditText;
     private TextInputEditText passwordEditText;
-    private MaterialButton loginButton;
+    private Button loginButton;
     private ProgressBar loadingProgressBar;
 
     public static Intent getLoginActivityIntent(Context context) {
-        return new Intent(context,LoginActivity.class);
+        return new Intent(context, LoginActivity.class);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_yash);
         loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory()).get(LoginViewModel.class);
 
-        serverUrlEditText = findViewById(R.id.urlText);
-        usernameEditText = findViewById(R.id.usernameText);
-        passwordEditText = findViewById(R.id.passwordText);
-        loginButton = findViewById(R.id.loginButton);
-        loadingProgressBar = findViewById(R.id.loginProgressBar);
+        serverUrlEditText = "https://www.erhmis.fhb.health.gov.lk/erhmis2356/api/";
+        usernameEditText = findViewById(R.id.username_yash);
+        passwordEditText = findViewById(R.id.password_yash);
+        loginButton = findViewById(R.id.btnLogin);
+        //loadingProgressBar = findViewById(R.id.loginProgressBar);
 
         loginViewModel.getLoginFormState().observe(this, loginFormState -> {
             if (loginFormState == null) {
                 return;
             }
             loginButton.setEnabled(loginFormState.isDataValid());
-            if (loginFormState.getServerUrlError() != null) {
-                serverUrlEditText.setError(getString(loginFormState.getServerUrlError()));
-            }
             if (loginFormState.getUsernameError() != null) {
                 usernameEditText.setError(getString(loginFormState.getUsernameError()));
             }
@@ -71,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             if (loginResult == null) {
                 return;
             }
-            loadingProgressBar.setVisibility(View.GONE);
+            //loadingProgressBar.setVisibility(View.GONE);
             if (loginResult.getError() != null) {
                 showLoginFailed(loginResult.getError());
             }
@@ -99,12 +97,14 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 loginViewModel.loginDataChanged(
-                        serverUrlEditText.getText().toString(),
+                        //serverUrlEditText.getText().toString()
+                        serverUrlEditText,
                         usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
             }
         };
-        serverUrlEditText.addTextChangedListener(afterTextChangedListener);
+
+        //serverUrlEditText.addTextChangedListener(afterTextChangedListener);
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
 
@@ -116,14 +116,17 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         loginButton.setOnClickListener(v -> login());
+
+
     }
 
     private void login() {
-        loadingProgressBar.setVisibility(View.VISIBLE);
+        //loadingProgressBar.setVisibility(View.VISIBLE);
         loginButton.setVisibility(View.INVISIBLE);
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-        String serverUrl = serverUrlEditText.getText().toString();
+        //String serverUrl = serverUrlEditText.getText().toString();
+        String serverUrl = serverUrlEditText;
 
         disposable = loginViewModel
                 .login(username, password, serverUrl)
@@ -138,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
             disposable.dispose();
         }
     }
+
 
     private void showLoginFailed(String errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();

@@ -4,7 +4,9 @@ import com.echdr.android.echdrapp.data.Sdk;
 
 import org.hisp.dhis.android.core.common.State;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class SyncStatusHelper {
 
@@ -29,10 +31,54 @@ public class SyncStatusHelper {
         return Sdk.d2().dataValueModule().dataValues().blockingCount();
     }
 
+
+
     public static boolean isThereDataToUpload() {
         return Sdk.d2().trackedEntityModule().trackedEntityInstances().byState()
                 .notIn(Collections.singletonList(State.SYNCED)).blockingCount() > 0 ||
                 Sdk.d2().dataValueModule().dataValues().byState()
                         .notIn(Collections.singletonList(State.SYNCED)).blockingCount() > 0;
     }
+
+    public static int therapeuticalCount(){
+        List<String> l = new ArrayList<>();
+        l.add("CoGsKgEG4O0");
+
+        return Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                .byProgramUids(l).blockingCount();
+    }
+
+    public static int supplementaryCount(){
+        List<String> l = new ArrayList<>();
+        l.add("tc6RsYbgGzm");
+
+        return Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                .byProgramUids(l).blockingCount();
+    }
+
+    public static int stuntingCount(){
+        List<String> l = new ArrayList<>();
+        l.add("lSSNwBMiwrK");
+
+        return Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                .byProgramUids(l).blockingCount();
+    }
+
+    public static int overweightCount(){
+        List<String> l = new ArrayList<>();
+        l.add("JsfNVX0hdq9");
+
+        return Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                .byProgramUids(l).blockingCount();
+    }
+
+    public static int otherCount(){
+        List<String> l = new ArrayList<>();
+        l.add("iUgzznPsePB");
+
+        return Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                .byProgramUids(l).blockingCount();
+    }
+
+
 }
