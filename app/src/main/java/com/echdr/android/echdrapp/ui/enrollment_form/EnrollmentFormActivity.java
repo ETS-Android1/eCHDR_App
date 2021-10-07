@@ -25,6 +25,7 @@ import com.echdr.android.echdrapp.data.service.forms.EnrollmentFormService;
 import com.echdr.android.echdrapp.data.service.forms.FormField;
 import com.echdr.android.echdrapp.data.service.forms.RuleEngineService;
 import com.echdr.android.echdrapp.databinding.ActivityEnrollmentFormBinding;
+import com.echdr.android.echdrapp.databinding.ActivityEnrollementFormThreeBinding;
 
 import org.hisp.dhis.android.core.arch.helpers.FileResizerHelper;
 import org.hisp.dhis.android.core.arch.helpers.FileResourceDirectoryHelper;
@@ -53,7 +54,7 @@ public class EnrollmentFormActivity extends AppCompatActivity {
     private final int CAMERA_RQ = 0;
     private final int CAMERA_PERMISSION = 0;
 
-    private ActivityEnrollmentFormBinding binding;
+    private ActivityEnrollementFormThreeBinding binding;
     private FormAdapter adapter;
     private CompositeDisposable disposable;
     private PublishProcessor<Boolean> engineInitialization;
@@ -79,17 +80,13 @@ public class EnrollmentFormActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_enrollment_form);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_enrollement_form_three);
 
-        Toolbar toolbar = binding.toolbar;
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         teiUid = getIntent().getStringExtra(IntentExtra.TEI_UID.name());
 
         adapter = new FormAdapter(getValueListener(), getImageListener());
-        binding.buttonEnd.setOnClickListener(this::finishEnrollment);
+        binding.buttonEndThree.setOnClickListener(this::finishEnrollment);
         binding.formRecycler.setAdapter(adapter);
 
         engineInitialization = PublishProcessor.create();

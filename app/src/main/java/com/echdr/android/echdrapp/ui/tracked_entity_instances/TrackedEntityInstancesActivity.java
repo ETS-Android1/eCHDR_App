@@ -50,12 +50,12 @@ public class TrackedEntityInstancesActivity extends ListActivity {
         setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
         compositeDisposable = new CompositeDisposable();
         observeTrackedEntityInstances();
-/*
+
         if (isEmpty(selectedProgram))
             findViewById(R.id.enrollmentButton).setVisibility(View.GONE);
 
 
-
+/*
         findViewById(R.id.enrollmentButton).setOnClickListener(view -> compositeDisposable.add(
                 Sdk.d2().programModule().programs().uid(selectedProgram).get()
                         .map(program -> Sdk.d2().trackedEntityModule().trackedEntityInstances()
@@ -81,8 +81,8 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                                 Throwable::printStackTrace
                         )
         ));
+*/
 
- */
     }
 
 

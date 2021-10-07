@@ -26,6 +26,7 @@ import com.echdr.android.echdrapp.ui.code_executor.CodeExecutorActivity;
 import com.echdr.android.echdrapp.ui.d2_errors.D2ErrorActivity;
 import com.echdr.android.echdrapp.ui.data_sets.DataSetsActivity;
 import com.echdr.android.echdrapp.ui.data_sets.instances.DataSetInstancesActivity;
+import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
 import com.echdr.android.echdrapp.ui.events.EventsActivity;
 import com.echdr.android.echdrapp.ui.foreign_key_violations.ForeignKeyViolationsActivity;
 import com.echdr.android.echdrapp.ui.programs.ProgramsActivity;
@@ -36,6 +37,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.hisp.dhis.android.core.arch.call.D2Progress;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstanceCreateProjection;
 import org.hisp.dhis.android.core.user.User;
 
 import java.text.MessageFormat;
@@ -134,13 +136,32 @@ public class MainActivity extends AppCompatActivity{
                 Toast t = Toast.makeText(context, "Clicked add new child", Toast.LENGTH_LONG);
                 t.show();
 
-                /*
-                Intent intent = EventsActivity.getIntent(context, "hM6Yt9FQL0n", "qj5r3gSwIww");
-                startActivity(intent);
-                tharaka's line
-                 */
-
-
+                int ENROLLMENT_RQ = 1210;
+                compositeDisposable.add(
+                        Sdk.d2().programModule().programs().uid("hM6Yt9FQL0n").get()
+                        .map(program -> Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                                .blockingAdd(
+                                        TrackedEntityInstanceCreateProjection.builder()
+                                                .organisationUnit(Sdk.d2().organisationUnitModule().organisationUnits()
+                                                    .one().blockingGet().uid())
+                                                .trackedEntityType(program.trackedEntityType().uid())
+                                                .build()
+                                ))
+                        .map(teiUid -> EnrollmentFormActivity.getFormActivityIntent(
+                                MainActivity.this,
+                                teiUid,
+                                "hM6Yt9FQL0n",
+                                Sdk.d2().organisationUnitModule().organisationUnits().one().blockingGet().uid()
+                        ))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                activityIntent ->
+                                        ActivityStarter.startActivityForResult(MainActivity.this,
+                                                activityIntent, ENROLLMENT_RQ),
+                                Throwable::printStackTrace
+                        )
+                );
             }
         });
 
