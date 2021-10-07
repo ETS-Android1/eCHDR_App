@@ -3,7 +3,11 @@ package com.echdr.android.echdrapp.ui.tracked_entity_instances;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -13,7 +17,10 @@ import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.ActivityStarter;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
 import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
+import com.google.android.material.internal.TextWatcherAdapter;
+import com.google.android.material.textfield.TextInputEditText;
 
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValue;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstanceCollectionRepository;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstanceCreateProjection;
 
@@ -32,6 +39,7 @@ public class TrackedEntityInstancesActivity extends ListActivity {
     private String selectedProgram;
     private final int ENROLLMENT_RQ = 1210;
     private TrackedEntityInstanceAdapter adapter;
+    private Context context ;
 
 
     private enum IntentExtra {
@@ -49,10 +57,36 @@ public class TrackedEntityInstancesActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
         compositeDisposable = new CompositeDisposable();
-        observeTrackedEntityInstances();
+        context = this;
+        observeTrackedEntityInstances(null);
 
-        if (isEmpty(selectedProgram))
-            findViewById(R.id.enrollmentButton).setVisibility(View.GONE);
+        TextInputEditText searchtxt = findViewById(R.id.searchTextTEI);
+        searchtxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                System.out.println(editable.toString());
+                observeTrackedEntityInstances(editable.toString());
+
+
+
+            }
+        });
+
+
+
+        //if (isEmpty(selectedProgram))
+           // findViewById(R.id.enrollmentButton).setVisibility(View.GONE);
 
 
 /*
@@ -87,12 +121,13 @@ public class TrackedEntityInstancesActivity extends ListActivity {
 
 
 
-    private void observeTrackedEntityInstances() {
+    private void observeTrackedEntityInstances(String name) {
         adapter = new TrackedEntityInstanceAdapter(this);
         recyclerView.setAdapter(adapter);
 
         try {
-            getTeiRepository().getPaged(20).observe(this, trackedEntityInstancePagedList -> {
+
+            getTeiRepository(name).getPaged(30).observe(this, trackedEntityInstancePagedList -> {
                 adapter.setSource(trackedEntityInstancePagedList.getDataSource());
                 adapter.submitList(trackedEntityInstancePagedList);
             });
@@ -105,13 +140,23 @@ public class TrackedEntityInstancesActivity extends ListActivity {
 
     }
 
-    private TrackedEntityInstanceCollectionRepository getTeiRepository() {
+    private TrackedEntityInstanceCollectionRepository getTeiRepository(String name) {
         TrackedEntityInstanceCollectionRepository teiRepository = null;
         try{
-            teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances().withTrackedEntityAttributeValues();
+            if(name == null)
+            {
+                teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances().withTrackedEntityAttributeValues();
+            }else
+            {
+
+                teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                        .withTrackedEntityAttributeValues();
+            }
+
         }
         catch (Exception e){
             Toast.makeText(this, "This data is partially filled", Toast.LENGTH_LONG).show();
+            System.out.println(e.toString());
         }
 
         return teiRepository;
