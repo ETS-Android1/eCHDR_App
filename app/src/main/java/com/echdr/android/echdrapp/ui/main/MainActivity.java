@@ -139,28 +139,28 @@ public class MainActivity extends AppCompatActivity{
                 int ENROLLMENT_RQ = 1210;
                 compositeDisposable.add(
                         Sdk.d2().programModule().programs().uid("hM6Yt9FQL0n").get()
-                        .map(program -> Sdk.d2().trackedEntityModule().trackedEntityInstances()
-                                .blockingAdd(
-                                        TrackedEntityInstanceCreateProjection.builder()
-                                                .organisationUnit(Sdk.d2().organisationUnitModule().organisationUnits()
-                                                    .one().blockingGet().uid())
-                                                .trackedEntityType(program.trackedEntityType().uid())
-                                                .build()
+                                .map(program -> Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                                        .blockingAdd(
+                                                TrackedEntityInstanceCreateProjection.builder()
+                                                        .organisationUnit(Sdk.d2().organisationUnitModule().organisationUnits()
+                                                                .one().blockingGet().uid())
+                                                        .trackedEntityType(program.trackedEntityType().uid())
+                                                        .build()
+                                        ))
+                                .map(teiUid -> EnrollmentFormActivity.getFormActivityIntent(
+                                        MainActivity.this,
+                                        teiUid,
+                                        "hM6Yt9FQL0n",
+                                        Sdk.d2().organisationUnitModule().organisationUnits().one().blockingGet().uid()
                                 ))
-                        .map(teiUid -> EnrollmentFormActivity.getFormActivityIntent(
-                                MainActivity.this,
-                                teiUid,
-                                "hM6Yt9FQL0n",
-                                Sdk.d2().organisationUnitModule().organisationUnits().one().blockingGet().uid()
-                        ))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                activityIntent ->
-                                        ActivityStarter.startActivityForResult(MainActivity.this,
-                                                activityIntent, ENROLLMENT_RQ),
-                                Throwable::printStackTrace
-                        )
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        activityIntent ->
+                                                ActivityStarter.startActivityForResult(MainActivity.this,
+                                                        activityIntent, ENROLLMENT_RQ),
+                                        Throwable::printStackTrace
+                                )
                 );
             }
         });

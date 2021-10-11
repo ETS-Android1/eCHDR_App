@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.echdr.android.echdrapp.R;
+import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.forms.FormField;
 
 import org.hisp.dhis.android.core.common.ValueType;
+import org.hisp.dhis.android.core.event.Event;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +34,28 @@ public class FormAdapter extends RecyclerView.Adapter<FieldHolder> {
         setHasStableIds(true);
     }
 
-    public FormAdapter(OnValueSaved valueSavedListener, OnImageSelectionClick imageSelectionListener) {
+    public FormAdapter(OnValueSaved valueSavedListener,
+                       OnImageSelectionClick imageSelectionListener) {
         this.fields = new ArrayList<>();
         this.valueSavedListener = valueSavedListener;
         this.imageSelectionListener = imageSelectionListener;
         setHasStableIds(true);
+
+
+        // MSGP| Weight for age => bJHCnjX02PN
+        // MSGP| Height for age => SOAtQfInRoy
+        // MSGP| Weight for height => jnzg5BvOj5T
+        for(int i =0; i<fields.size();i++)
+        {
+            if(fields.get(i).getUid().equals("bJHCnjX02PN") ||
+                    fields.get(i).getUid().equals("SOAtQfInRoy") ||
+                    fields.get(i).getUid().equals("jnzg5BvOj5T"))
+                fields.remove(i);
+
+            System.out.println("Running here");
+        }
     }
+
 
     @NonNull
     @Override
@@ -70,6 +88,8 @@ public class FormAdapter extends RecyclerView.Adapter<FieldHolder> {
     @Override
     public void onBindViewHolder(@NonNull FieldHolder holder, int position) {
         holder.bind(fields.get(position));
+
+
     }
 
     @Override

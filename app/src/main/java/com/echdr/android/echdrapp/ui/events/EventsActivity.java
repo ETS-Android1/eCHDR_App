@@ -66,6 +66,7 @@ public class EventsActivity extends ListActivity {
         observeEvents();
         context = this;
         //Sdk.d2().programModule().programs().byTrackedEntityTypeUid().eq(selectedChild)
+        System.out.println("Selected child is @ eventActivity " + selectedChild);
 
         if (isEmpty(selectedProgram))
             findViewById(R.id.eventButton).setVisibility(View.GONE);
@@ -158,7 +159,7 @@ public class EventsActivity extends ListActivity {
     }
 
     private void observeEvents() {
-        adapter = new EventAdapter(this);
+        adapter = new EventAdapter(this, selectedChild);
         recyclerView.setAdapter(adapter);
 
 

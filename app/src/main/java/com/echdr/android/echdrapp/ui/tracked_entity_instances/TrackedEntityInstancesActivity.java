@@ -148,9 +148,14 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                 teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances().withTrackedEntityAttributeValues();
             }else
             {
-
+                //teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                  //      .withTrackedEntityAttributeValues().equals(
+                    //            teiRepository.withTrackedEntityAttributeValues().equals("zh4hiarsSD5");
+                      //  );
                 teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances()
-                        .withTrackedEntityAttributeValues();
+                        .byUid().eq("zh4hiarsSD5")
+                        .withTrackedEntityAttributeValues().byUid().eq(name);
+
             }
 
         }

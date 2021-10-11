@@ -5,6 +5,44 @@
     android:layout_height="match_parent"
     android:background="@drawable/dialog_bg">
 
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Weight for age"/>
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/weightforageLabel"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="more than +3SD"
+            android:background="@color/colorRed"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Height for age"/>
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/heightforageLabel"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="more than +3SD"
+            android:background="@color/colorRed"/>
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="match_parent"

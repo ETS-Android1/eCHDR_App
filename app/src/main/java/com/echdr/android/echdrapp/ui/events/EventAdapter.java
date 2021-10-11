@@ -35,11 +35,12 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
 
     private final AppCompatActivity activity;
     private DataSource<?, Event> source;
-    private String selectedChild = "qj5r3gSwIww";
+    private String selectedChild;
 
-    public EventAdapter(AppCompatActivity activity) {
+    public EventAdapter(AppCompatActivity activity, String selectedChild) {
         super(new DiffByIdItemCallback<>());
         this.activity = activity;
+        this.selectedChild = selectedChild;
     }
 
     @NonNull

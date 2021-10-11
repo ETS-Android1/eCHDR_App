@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.service.forms.FormField;
 
-class FieldHolder extends RecyclerView.ViewHolder {
-
+abstract class FieldHolder extends RecyclerView.ViewHolder {
     final FormAdapter.OnValueSaved valueSavedListener;
+
     TextView label;
 
     FieldHolder(@NonNull View itemView, FormAdapter.OnValueSaved valueSavedListener) {
@@ -23,4 +23,12 @@ class FieldHolder extends RecyclerView.ViewHolder {
     void bind(FormField fieldItem) {
         label.setText(fieldItem.getFormLabel());
     }
+
+    public void changeColor(int age, int weight, int height, String sex){
+
+    }
+
+
+
+
 }

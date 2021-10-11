@@ -43,9 +43,9 @@ class TextFieldHolder extends FieldHolder {
             case PHONE_NUMBER:
                 editText.setInputType(InputType.TYPE_CLASS_PHONE);
                 break;
-                default:
-                    editText.setInputType(InputType.TYPE_CLASS_TEXT);
-                    break;
+            default:
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
         }
 
         editText.setText(fieldItem.getValue());
@@ -58,5 +58,10 @@ class TextFieldHolder extends FieldHolder {
                     valueSavedListener.onValueSaved(fieldItem.getUid(), editText.getText().toString());
             }
         });
+
+
+
     }
+
+
 }
