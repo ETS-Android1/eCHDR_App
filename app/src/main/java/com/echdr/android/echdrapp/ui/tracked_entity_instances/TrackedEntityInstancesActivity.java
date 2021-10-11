@@ -152,9 +152,8 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                   //      .withTrackedEntityAttributeValues().equals(
                     //            teiRepository.withTrackedEntityAttributeValues().equals("zh4hiarsSD5");
                       //  );
-                teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances()
-                        .byUid().eq("zh4hiarsSD5")
-                        .withTrackedEntityAttributeValues().byUid().eq(name);
+                //teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstanceQuery()
+                        //.byAttribute("zh4hiarsSD5").eq(name).
 
             }
 

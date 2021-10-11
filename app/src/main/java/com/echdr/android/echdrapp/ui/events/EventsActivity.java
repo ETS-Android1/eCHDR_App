@@ -106,15 +106,23 @@ public class EventsActivity extends ListActivity {
                                     Sdk.d2().programModule().programs()
                                             .uid(selectedProgram).get()
                                             .map(program -> {
+
+                                                String orgUnit = Sdk.d2().trackedEntityModule().trackedEntityInstances()
+                                                        .uid(selectedChild).blockingGet().organisationUnit();
+                                                /*
                                                 String orgUnit = Sdk.d2().organisationUnitModule().organisationUnits()
                                                         .byProgramUids(Collections.singletonList(selectedProgram))
                                                         .byOrganisationUnitScope(OrganisationUnit.Scope.SCOPE_DATA_CAPTURE)
                                                         .one().blockingGet().uid();
+
+                                                 */
                                                 String enrollmentID = Sdk.d2().enrollmentModule().enrollments()
                                                         .byProgram().eq(selectedProgram)
                                                         .byTrackedEntityInstance().eq(selectedChild)
                                                         .byOrganisationUnit().eq(orgUnit)
                                                         .one().blockingGet().uid();
+
+
                                                 //String stage = Sdk.d2().programModule().programStages()
                                                 //        .byProgramUid().eq(program.uid())
                                                 //        .one().blockingGet().uid();
