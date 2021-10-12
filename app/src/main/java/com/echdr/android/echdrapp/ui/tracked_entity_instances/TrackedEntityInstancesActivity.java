@@ -3,43 +3,46 @@ package com.echdr.android.echdrapp.ui.tracked_entity_instances;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LiveData;
+import androidx.paging.PagedList;
 
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
-import com.echdr.android.echdrapp.data.service.ActivityStarter;
+import com.echdr.android.echdrapp.databinding.ActivityTrackedEntityInstanceSearchBinding;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
-import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
-import com.google.android.material.internal.TextWatcherAdapter;
+import com.echdr.android.echdrapp.ui.tracked_entity_instances.search.SearchFormAdapter;
 import com.google.android.material.textfield.TextInputEditText;
 
-import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValue;
+import org.hisp.dhis.android.core.arch.helpers.UidsHelper;
+import org.hisp.dhis.android.core.organisationunit.OrganisationUnit;
+import org.hisp.dhis.android.core.organisationunit.OrganisationUnitMode;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstance;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstanceCollectionRepository;
-import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstanceCreateProjection;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-
-import static android.text.TextUtils.isEmpty;
 
 public class TrackedEntityInstancesActivity extends ListActivity {
+
+    private ActivityTrackedEntityInstanceSearchBinding binding;
 
     private CompositeDisposable compositeDisposable;
     private String selectedProgram;
     private final int ENROLLMENT_RQ = 1210;
     private TrackedEntityInstanceAdapter adapter;
     private Context context ;
+
+    private String savedAttribute;
+    private String savedProgram;
+    private View searchText;
 
 
     private enum IntentExtra {
@@ -55,79 +58,62 @@ public class TrackedEntityInstancesActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
         compositeDisposable = new CompositeDisposable();
         context = this;
-        observeTrackedEntityInstances(null);
-
-        TextInputEditText searchtxt = findViewById(R.id.searchTextTEI);
-        searchtxt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        savedAttribute = "zh4hiarsSD5";
+        savedProgram = "hM6Yt9FQL0n";
 
 
-            }
+        observeTrackedEntityInstances();
+        searchText = findViewById(R.id.searchTextTEI);
+        Button submitButton = findViewById(R.id.downloadDataButton);
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                System.out.println(editable.toString());
-                observeTrackedEntityInstances(editable.toString());
-
-
-
-            }
+        submitButton.setOnClickListener(view -> {
+            search();
         });
 
 
-
-        //if (isEmpty(selectedProgram))
-           // findViewById(R.id.enrollmentButton).setVisibility(View.GONE);
-
-
-/*
-        findViewById(R.id.enrollmentButton).setOnClickListener(view -> compositeDisposable.add(
-                Sdk.d2().programModule().programs().uid(selectedProgram).get()
-                        .map(program -> Sdk.d2().trackedEntityModule().trackedEntityInstances()
-                                .blockingAdd(
-                                        TrackedEntityInstanceCreateProjection.builder()
-                                                .organisationUnit(Sdk.d2().organisationUnitModule().organisationUnits()
-                                                        .one().blockingGet().uid())
-                                                .trackedEntityType(program.trackedEntityType().uid())
-                                                .build()
-                                ))
-                        .map(teiUid -> EnrollmentFormActivity.getFormActivityIntent(
-                                TrackedEntityInstancesActivity.this,
-                                teiUid,
-                                selectedProgram,
-                                Sdk.d2().organisationUnitModule().organisationUnits().one().blockingGet().uid()
-                        ))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                activityIntent ->
-                                        ActivityStarter.startActivityForResult(
-                                                TrackedEntityInstancesActivity.this, activityIntent,ENROLLMENT_RQ),
-                                Throwable::printStackTrace
-                        )
-        ));
-*/
-
     }
 
-
-
-    private void observeTrackedEntityInstances(String name) {
+    private void search() {
         adapter = new TrackedEntityInstanceAdapter(this);
         recyclerView.setAdapter(adapter);
 
+        getTrackedEntityInstanceQuery().observe(this, trackedEntityInstancePagedList -> {
+            adapter.submitList(trackedEntityInstancePagedList);
+        });
+    }
+
+
+    private LiveData<PagedList<TrackedEntityInstance>> getTrackedEntityInstanceQuery() {
+        List<OrganisationUnit> organisationUnits = Sdk.d2().organisationUnitModule().organisationUnits()
+                .byOrganisationUnitScope(OrganisationUnit.Scope.SCOPE_DATA_CAPTURE)
+                .byRootOrganisationUnit(true)
+                .blockingGet();
+
+        List<String> organisationUids = new ArrayList<>();
+        if (!organisationUnits.isEmpty()) {
+            organisationUids = UidsHelper.getUidsList(organisationUnits);
+        }
+
+        return Sdk.d2().trackedEntityModule()
+                .trackedEntityInstanceQuery()
+                .byOrgUnits().in(organisationUids)
+                .byOrgUnitMode().eq(OrganisationUnitMode.DESCENDANTS)
+                .byProgram().eq(savedProgram)
+                .byFilter(savedAttribute).like(String.valueOf(searchText))
+                .onlineFirst().getPaged(15);
+    }
+
+
+    private void observeTrackedEntityInstances() {
+        adapter = new TrackedEntityInstanceAdapter(this);
+        recyclerView.setAdapter(adapter);
         try {
 
-            getTeiRepository(name).getPaged(30).observe(this, trackedEntityInstancePagedList -> {
+            getTeiRepository().getPaged(30).observe(this, trackedEntityInstancePagedList -> {
                 adapter.setSource(trackedEntityInstancePagedList.getDataSource());
                 adapter.submitList(trackedEntityInstancePagedList);
             });
@@ -135,28 +121,13 @@ public class TrackedEntityInstancesActivity extends ListActivity {
         catch(Exception e){
             setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
         }
-        //findViewById(R.id.trackedEntityInstancesNotificator).setVisibility(
-        //      trackedEntityInstancePagedList.isEmpty() ? View.VISIBLE : View.GONE);
 
     }
 
-    private TrackedEntityInstanceCollectionRepository getTeiRepository(String name) {
+    private TrackedEntityInstanceCollectionRepository getTeiRepository() {
         TrackedEntityInstanceCollectionRepository teiRepository = null;
         try{
-            if(name == null)
-            {
                 teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances().withTrackedEntityAttributeValues();
-            }else
-            {
-                //teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstances()
-                  //      .withTrackedEntityAttributeValues().equals(
-                    //            teiRepository.withTrackedEntityAttributeValues().equals("zh4hiarsSD5");
-                      //  );
-                //teiRepository = Sdk.d2().trackedEntityModule().trackedEntityInstanceQuery()
-                        //.byAttribute("zh4hiarsSD5").eq(name).
-
-            }
-
         }
         catch (Exception e){
             Toast.makeText(this, "This data is partially filled", Toast.LENGTH_LONG).show();
@@ -165,6 +136,9 @@ public class TrackedEntityInstancesActivity extends ListActivity {
 
         return teiRepository;
     }
+
+
+
 
 
     @Override
