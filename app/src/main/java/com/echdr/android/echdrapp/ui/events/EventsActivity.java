@@ -122,10 +122,10 @@ public class EventsActivity extends ListActivity {
                                                         .byOrganisationUnit().eq(orgUnit)
                                                         .one().blockingGet().uid();
 
-
                                                 //String stage = Sdk.d2().programModule().programStages()
                                                 //        .byProgramUid().eq(program.uid())
                                                 //        .one().blockingGet().uid();
+
                                                 String attrOptionCombo = program.categoryCombo() != null ?
                                                         Sdk.d2().categoryModule().categoryOptionCombos()
                                                                 .byCategoryComboUid().eq(program.categoryComboUid())
