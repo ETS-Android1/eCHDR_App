@@ -63,10 +63,11 @@ public class TrackedEntityInstanceAdapter extends PagedListAdapter<TrackedEntity
     public void onBindViewHolder(@NonNull ListItemWithSyncHolder holder, int position) {
         TrackedEntityInstance trackedEntityInstance = getItem(position);
         List<TrackedEntityAttributeValue> values = trackedEntityInstance.trackedEntityAttributeValues();
-        holder.title.setText(valueAt(values, teiTitle(trackedEntityInstance)));
+        holder.title.setText(valueAt(values, "zh4hiarsSD5"));
         holder.subtitle1.setText(valueAt(values, teiSubtitle1(trackedEntityInstance)));
         holder.subtitle2.setText(setSubtitle2(values, trackedEntityInstance));
         holder.rightText.setText(DateFormatHelper.formatDate(trackedEntityInstance.created()));
+        //holder.title.setText();
         setImage(trackedEntityInstance, holder);
         holder.delete.setVisibility(View.VISIBLE);
         holder.delete.setOnClickListener(view -> {
@@ -135,6 +136,16 @@ public class TrackedEntityInstanceAdapter extends PagedListAdapter<TrackedEntity
     }
 
     private String valueAt(List<TrackedEntityAttributeValue> values, String attributeUid) {
+        for (TrackedEntityAttributeValue attributeValue : values) {
+            if (attributeValue.trackedEntityAttribute().equals(attributeUid)) {
+                return attributeValue.value();
+            }
+        }
+
+        return null;
+    }
+
+    private String getVsalue(List<TrackedEntityAttributeValue> values, String attributeUid) {
         for (TrackedEntityAttributeValue attributeValue : values) {
             if (attributeValue.trackedEntityAttribute().equals(attributeUid)) {
                 return attributeValue.value();

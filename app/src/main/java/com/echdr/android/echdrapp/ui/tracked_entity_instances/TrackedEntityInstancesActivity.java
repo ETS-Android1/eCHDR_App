@@ -3,8 +3,11 @@ package com.echdr.android.echdrapp.ui.tracked_entity_instances;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -17,6 +20,7 @@ import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.databinding.ActivityTrackedEntityInstanceSearchBinding;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
 import com.echdr.android.echdrapp.ui.tracked_entity_instances.search.SearchFormAdapter;
+import com.google.android.material.internal.TextWatcherAdapter;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.hisp.dhis.android.core.arch.helpers.UidsHelper;
@@ -42,7 +46,7 @@ public class TrackedEntityInstancesActivity extends ListActivity {
 
     private String savedAttribute;
     private String savedProgram;
-    private View searchText;
+    private EditText searchText;
 
 
     private enum IntentExtra {
@@ -65,29 +69,55 @@ public class TrackedEntityInstancesActivity extends ListActivity {
         savedAttribute = "zh4hiarsSD5";
         savedProgram = "hM6Yt9FQL0n";
 
-
         observeTrackedEntityInstances();
         searchText = findViewById(R.id.searchTextTEI);
         Button submitButton = findViewById(R.id.downloadDataButton);
 
-        submitButton.setOnClickListener(view -> {
-            search();
+        //submitButton.setOnClickListener(view -> {
+
+        //    System.out.println("Button clicked");
+        //    search();
+        //});
+
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(!editable.toString().isEmpty())
+                {
+                    System.out.println(editable.toString());
+                    search(editable.toString());
+                }else{
+                    observeTrackedEntityInstances();
+                }
+
+            }
         });
 
 
     }
 
-    private void search() {
+    private void search(String name) {
         adapter = new TrackedEntityInstanceAdapter(this);
+        System.out.println("Came here");
         recyclerView.setAdapter(adapter);
 
-        getTrackedEntityInstanceQuery().observe(this, trackedEntityInstancePagedList -> {
+        getTrackedEntityInstanceQuery(name).observe(this, trackedEntityInstancePagedList -> {
+            adapter.setSource(trackedEntityInstancePagedList.getDataSource());
             adapter.submitList(trackedEntityInstancePagedList);
         });
+
+        System.out.println("Came here after setting");
     }
 
 
-    private LiveData<PagedList<TrackedEntityInstance>> getTrackedEntityInstanceQuery() {
+    private LiveData<PagedList<TrackedEntityInstance>> getTrackedEntityInstanceQuery(String name) {
+
         List<OrganisationUnit> organisationUnits = Sdk.d2().organisationUnitModule().organisationUnits()
                 .byOrganisationUnitScope(OrganisationUnit.Scope.SCOPE_DATA_CAPTURE)
                 .byRootOrganisationUnit(true)
@@ -98,6 +128,16 @@ public class TrackedEntityInstancesActivity extends ListActivity {
             organisationUids = UidsHelper.getUidsList(organisationUnits);
         }
 
+
+        return Sdk.d2().trackedEntityModule()
+                .trackedEntityInstanceQuery()
+                //.byOrgUnits().in(organisationUids)
+                //.byOrgUnitMode().eq(OrganisationUnitMode.DESCENDANTS)
+                .byProgram().eq(savedProgram)
+                .byFilter(savedAttribute).like(name)
+                .onlineFirst().getPaged(15);
+
+        /*
         return Sdk.d2().trackedEntityModule()
                 .trackedEntityInstanceQuery()
                 .byOrgUnits().in(organisationUids)
@@ -105,6 +145,8 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                 .byProgram().eq(savedProgram)
                 .byFilter(savedAttribute).like(String.valueOf(searchText))
                 .onlineFirst().getPaged(15);
+
+         */
     }
 
 
@@ -120,6 +162,7 @@ public class TrackedEntityInstancesActivity extends ListActivity {
         }
         catch(Exception e){
             setUp(R.layout.activity_tracked_entity_instances, R.id.trackedEntityInstancesRecyclerView);
+            System.out.println(e.toString());
         }
 
     }
@@ -136,10 +179,6 @@ public class TrackedEntityInstancesActivity extends ListActivity {
 
         return teiRepository;
     }
-
-
-
-
 
     @Override
     protected void onDestroy() {
