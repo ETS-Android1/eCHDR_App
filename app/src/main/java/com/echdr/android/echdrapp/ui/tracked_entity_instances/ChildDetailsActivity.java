@@ -81,7 +81,6 @@ public class ChildDetailsActivity extends ListActivity {
         stuntingNotEnrolled = findViewById(R.id.NotEnStunting);
 
 
-
         trackedEntityInstanceUid = getIntent().getStringExtra(IntentExtra.TRACKED_ENTITY_INSTANCE_UID.name());
 
         try{

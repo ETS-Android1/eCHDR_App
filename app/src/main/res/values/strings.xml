@@ -179,4 +179,46 @@
     <string name="therapeutic">Therapeutic feeding</string>
     <string name="stunt">Stunting</string>
     <string name="other">Other health/ Non-health</string>
+
+
+    <string-array name="ethnicity">
+        <item>Burgher</item>
+        <item>Muslim</item>
+        <item>Others</item>
+        <item>Sinhalese</item>
+        <item>Tamil</item>
+    </string-array>
+
+    <string-array name="relationShip">
+        <item>Father</item>
+        <item>Grand parents</item>
+        <item>Mother</item>
+        <item>other close relatives</item>
+        <item>others</item>
+    </string-array>
+
+    <string-array name="highestEduLevel">
+        <item>Completed grade 10 (Completed Secondary education)</item>
+        <item>Completed grade 5 (Completed Primary)</item>
+        <item>Grade 1 to 5 (Not completed Grade 5/Some Primary education)</item>
+        <item>Grade 11 or higher (Higher than Secondary education)</item>
+        <item>Grade 6 to 10 (Not completed Grade 10/Some Secondary education)</item>
+        <item>No formal schooling</item>
+    </string-array>
+
+    <string-array name="occupation">
+        <item>Home maker</item>
+        <item>Pain employment</item>
+        <item>Retired</item>
+        <item>Student</item>
+        <item>Unemployed</item>
+    </string-array>
+
+
+    <string-array name="sector">
+        <item>Estate</item>
+        <item>Rural</item>
+        <item>Urban</item>
+    </string-array>
+
 </resources>
