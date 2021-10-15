@@ -1,23 +1,36 @@
 package com.echdr.android.echdrapp.ui.tracked_entity_instances;
 
+import static android.text.TextUtils.isEmpty;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.ActivityStarter;
+import com.echdr.android.echdrapp.data.service.forms.EventFormService;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
 import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
 import com.echdr.android.echdrapp.ui.events.EventsActivity;
 
 import org.hisp.dhis.android.core.enrollment.Enrollment;
+import org.hisp.dhis.android.core.maintenance.D2Error;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValueObjectRepository;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValueObjectRepository;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstance;
 
 import java.util.List;
@@ -29,10 +42,27 @@ public class ChildDetailsActivity extends ListActivity {
 
     private String trackedEntityInstanceUid;
     private Disposable disposable;
-    private TextView name;
-    private TextView immuneNum;
-    private TextView dob;
-    private TextView gender;
+    private EditText name;
+    private TextView cd_no;
+    private TextView cd_dob;
+    private TextView cd_gender;
+    private EditText address;
+    private EditText birthWeight;
+    private EditText birthHeight;
+    private Spinner ethnicity;
+    private EditText GN_Area;
+    private Spinner relationship;
+    private EditText nic;
+    private Spinner occupation;
+    private Spinner sector;
+    private Spinner highestEduLevel;
+    private EditText mother_name;
+    private EditText mother_dob;
+    private EditText numberOfChildren;
+    private EditText caregiver_name;
+    private EditText lPhone;
+    private EditText mNumber;
+
 
     private ImageView overweightNotEnrolled;
     private ImageView overweightEnrolled;
@@ -48,6 +78,8 @@ public class ChildDetailsActivity extends ListActivity {
     private ImageView stuntingNotEnrolled;
     private String orgUnit;
 
+    public static int posOfItemSpinnerSelected;
+
     private enum IntentExtra {
         TRACKED_ENTITY_INSTANCE_UID
     }
@@ -62,10 +94,28 @@ public class ChildDetailsActivity extends ListActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_child_details);
+
+        cd_no = findViewById(R.id.cd_no);
+        cd_dob = findViewById(R.id.cd_dob);
+        cd_gender = findViewById(R.id.cd_gender);
         name = findViewById(R.id.name);
-        immuneNum = findViewById(R.id.cd_no);
-        dob = findViewById(R.id.cd_dob);
-        gender = findViewById(R.id.cd_gender);
+        address = findViewById(R.id.address);
+        birthWeight = findViewById(R.id.birthWeight);
+        birthHeight = findViewById(R.id.birthWeight);
+        ethnicity = findViewById(R.id.ethnicity);
+        GN_Area = findViewById(R.id.GN_Area);
+        relationship = findViewById(R.id.relationship);
+        nic = findViewById(R.id.nic);
+        occupation = findViewById(R.id.occupation);
+        sector = findViewById(R.id.sector);
+        highestEduLevel = findViewById(R.id.highestEduLevel);
+        mother_name = findViewById(R.id.mother_name);
+        mother_dob = findViewById(R.id.mother_dob);
+        numberOfChildren = findViewById(R.id.numberOfChildren);
+        caregiver_name = findViewById(R.id.caregiver_name);
+        lPhone = findViewById(R.id.lPhone);
+        mNumber = findViewById(R.id.mNumber);
+
 
         overweightNotEnrolled = findViewById(R.id.NotEnOverWeight);
         overweightEnrolled = findViewById(R.id.EnOverWeight);
@@ -88,25 +138,20 @@ public class ChildDetailsActivity extends ListActivity {
                     .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
                     .byTrackedEntityAttribute().eq("h2ATdtJguMq")
                     .one().blockingGet().value();
-            immuneNum.setText(birthAndImmNum);
+            cd_no.setText(birthAndImmNum);
 
-            String nameofChild = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                    .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
-                    .byTrackedEntityAttribute().eq("zh4hiarsSD5")
-                    .one().blockingGet().value();
-            name.setText(nameofChild);
 
             String dateofbirth = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
                     .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
                     .byTrackedEntityAttribute().eq("qNH202ChkV3")
                     .one().blockingGet().value();
-            dob.setText(dateofbirth);
+            cd_dob.setText(dateofbirth);
 
             String sex = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
                     .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
                     .byTrackedEntityAttribute().eq("lmtzQrlHMYF")
                     .one().blockingGet().value();
-            gender.setText(sex);
+            cd_gender.setText(sex);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -115,9 +160,52 @@ public class ChildDetailsActivity extends ListActivity {
         getEnrollment();
         EnrollToPrograms();
 
+
+
+
     }
 
-    @SuppressLint("WrongConstant")
+    private String getValueListener(String fieldUid, String dataElement) {
+            TrackedEntityAttributeValueObjectRepository valueRepository =
+                    Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
+                            .value(
+                                    fieldUid,
+                                    dataElement
+
+                            );
+            String currentValue = valueRepository.blockingExists() ?
+                    valueRepository.blockingGet().value() : "";
+
+            return currentValue;
+    }
+
+    private void saveDataElement(String dataElement, String fieldUid){
+        TrackedEntityDataValueObjectRepository valueRepository = null;
+        try {
+            valueRepository = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
+                    .value(
+                            fieldUid,
+                            dataElement
+                    );
+        }catch (Exception e)
+        {
+
+        }
+
+        try{
+            if(!isEmpty(dataElement))
+            {
+                valueRepository.blockingSet(dataElement);
+            }else
+            {
+                valueRepository.blockingDeleteIfExist();
+            }
+        } catch (D2Error d2Error) {
+            d2Error.printStackTrace();
+        }
+        
+    }
+
     private void getEnrollment(){
 
         List<Enrollment> enrollments = Sdk.d2().enrollmentModule().enrollments()
