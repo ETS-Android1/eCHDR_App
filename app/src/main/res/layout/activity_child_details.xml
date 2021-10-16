@@ -961,7 +961,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="10dp"
-                    android:src="@drawable/edit"/>
+                    android:src="@drawable/edit" />
 
             </RelativeLayout>
         </LinearLayout>

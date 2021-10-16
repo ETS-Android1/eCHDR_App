@@ -135,7 +135,7 @@ public class TrackedEntityInstancesActivity extends ListActivity {
                 //.byOrgUnitMode().eq(OrganisationUnitMode.DESCENDANTS)
                 .byProgram().eq(savedProgram)
                 .byFilter(savedAttribute).like(name)
-                .onlineFirst().getPaged(15);
+                .getPaged(100);
 
         /*
         return Sdk.d2().trackedEntityModule()

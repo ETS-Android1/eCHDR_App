@@ -2,37 +2,36 @@ package com.echdr.android.echdrapp.ui.tracked_entity_instances;
 
 import static android.text.TextUtils.isEmpty;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.ActivityStarter;
-import com.echdr.android.echdrapp.data.service.forms.EventFormService;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
 import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
 import com.echdr.android.echdrapp.ui.events.EventsActivity;
 
 import org.hisp.dhis.android.core.enrollment.Enrollment;
 import org.hisp.dhis.android.core.maintenance.D2Error;
-import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValueObjectRepository;
+import org.hisp.dhis.android.core.option.Option;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValueObjectRepository;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstance;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
@@ -63,6 +62,11 @@ public class ChildDetailsActivity extends ListActivity {
     private EditText lPhone;
     private EditText mNumber;
 
+    private ImageButton edit_button;
+
+    private List<Option> optionList;
+
+
 
     private ImageView overweightNotEnrolled;
     private ImageView overweightEnrolled;
@@ -78,7 +82,6 @@ public class ChildDetailsActivity extends ListActivity {
     private ImageView stuntingNotEnrolled;
     private String orgUnit;
 
-    public static int posOfItemSpinnerSelected;
 
     private enum IntentExtra {
         TRACKED_ENTITY_INSTANCE_UID
@@ -101,7 +104,7 @@ public class ChildDetailsActivity extends ListActivity {
         name = findViewById(R.id.name);
         address = findViewById(R.id.address);
         birthWeight = findViewById(R.id.birthWeight);
-        birthHeight = findViewById(R.id.birthWeight);
+        birthHeight = findViewById(R.id.birthHeight);
         ethnicity = findViewById(R.id.ethnicity);
         GN_Area = findViewById(R.id.GN_Area);
         relationship = findViewById(R.id.relationship);
@@ -115,6 +118,7 @@ public class ChildDetailsActivity extends ListActivity {
         caregiver_name = findViewById(R.id.caregiver_name);
         lPhone = findViewById(R.id.lPhone);
         mNumber = findViewById(R.id.mNumber);
+        edit_button = findViewById(R.id.edit_btn);
 
 
         overweightNotEnrolled = findViewById(R.id.NotEnOverWeight);
@@ -134,50 +138,61 @@ public class ChildDetailsActivity extends ListActivity {
         trackedEntityInstanceUid = getIntent().getStringExtra(IntentExtra.TRACKED_ENTITY_INSTANCE_UID.name());
 
         try{
-            String birthAndImmNum = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                    .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
-                    .byTrackedEntityAttribute().eq("h2ATdtJguMq")
-                    .one().blockingGet().value();
-            cd_no.setText(birthAndImmNum);
+            cd_no.setText(getValueListener("h2ATdtJguMq"));
+            cd_dob.setText(getValueListener("qNH202ChkV3"));
+            cd_gender.setText(getValueListener("lmtzQrlHMYF"));
+            name.setText(getValueListener("zh4hiarsSD5"));
+            address.setText(getValueListener("D9aC5K6C6ne"));
+            birthWeight.setText(getValueListener("Fs89NLB2FrA"));
+            birthHeight.setText(getValueListener("LpvdWM4YuRq"));
+            setSpinner("NsoirMjYF2C", ethnicity);
+            GN_Area.setText(getValueListener("upQGjAHBjzu"));
+            setSpinner("PmA6WejlEg8", relationship);
+            nic.setText(getValueListener("Gzjb3fp9FSe"));
+            setSpinner("LOPHzLXYAgC", occupation);
+            setSpinner("Y0TxeTJlnjn", sector);
+            setSpinner("gigmQXuSnNy", highestEduLevel);
+            mother_name.setText(getValueListener("K7Fxa2wv2Rx"));
+            mother_dob.setText(getValueListener("kYfIkz2M6En"));
+            numberOfChildren.setText(getValueListener("Gy4bCBxNuo4"));
+            caregiver_name.setText(getValueListener("hxCXbI5J2YS"));
+            lPhone.setText(getValueListener("cpcMXDhQouL"));
+            mNumber.setText(getValueListener("LYRf4eIUVuN"));
 
-
-            String dateofbirth = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                    .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
-                    .byTrackedEntityAttribute().eq("qNH202ChkV3")
-                    .one().blockingGet().value();
-            cd_dob.setText(dateofbirth);
-
-            String sex = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                    .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
-                    .byTrackedEntityAttribute().eq("lmtzQrlHMYF")
-                    .one().blockingGet().value();
-            cd_gender.setText(sex);
         }catch (Exception e){
             e.printStackTrace();
         }
 
-
         getEnrollment();
         EnrollToPrograms();
 
+        edit_button.setOnClickListener(view ->{
+            name.setEnabled(true);
+        });
+
 
 
 
     }
 
-    private String getValueListener(String fieldUid, String dataElement) {
-            TrackedEntityAttributeValueObjectRepository valueRepository =
-                    Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                            .value(
-                                    fieldUid,
-                                    dataElement
+    private String getValueListener(String dataElement) {
 
-                            );
-            String currentValue = valueRepository.blockingExists() ?
-                    valueRepository.blockingGet().value() : "";
+        String currentValue = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
+                .byTrackedEntityInstance().eq(trackedEntityInstanceUid)
+                .byTrackedEntityAttribute().eq(dataElement)
+                .one().blockingGet().value();
 
             return currentValue;
     }
+
+    private void setSpinner(String optionSetUid, Spinner spinnerName) {
+        optionList = Sdk.d2().optionModule().options().byOptionSetUid().eq(optionSetUid).blockingGet();
+        List<String> optionListNames = new ArrayList<>();
+        for (Option option : optionList) optionListNames.add(option.displayName());
+        spinnerName.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, optionListNames));
+
+    }
+
 
     private void saveDataElement(String dataElement, String fieldUid){
         TrackedEntityDataValueObjectRepository valueRepository = null;

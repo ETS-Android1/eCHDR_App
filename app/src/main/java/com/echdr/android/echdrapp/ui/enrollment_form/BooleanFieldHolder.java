@@ -17,6 +17,7 @@ class BooleanFieldHolder extends FieldHolder {
     BooleanFieldHolder(@NonNull View itemView, FormAdapter.OnValueSaved valueSavedListener) {
         super(itemView, valueSavedListener);
         this.radioGroup = itemView.findViewById(R.id.radioGroup);
+
     }
 
     void bind(FormField fieldItem) {
@@ -36,6 +37,7 @@ class BooleanFieldHolder extends FieldHolder {
             radioGroup.clearCheck();
         }
 
+
         radioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
             String value;
             switch (i) {
@@ -50,7 +52,12 @@ class BooleanFieldHolder extends FieldHolder {
                         break;
             }
 
+            System.out.println("Field id is + " + fieldItem.getUid() + value);
+            if(value == null)
+                value = "";
+
             valueSavedListener.onValueSaved(fieldItem.getUid(), value);
         });
     }
+
 }
