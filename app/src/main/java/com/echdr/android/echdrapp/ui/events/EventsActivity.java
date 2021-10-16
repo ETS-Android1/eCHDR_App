@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -14,6 +15,7 @@ import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.ActivityStarter;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
+import com.echdr.android.echdrapp.ui.event_form.AnthropometryActivity;
 import com.echdr.android.echdrapp.ui.event_form.EventFormActivity;
 
 import org.hisp.dhis.android.core.event.EventCollectionRepository;
@@ -102,30 +104,31 @@ public class EventsActivity extends ListActivity {
                             stageSelected = stages.get(which).uid();
 
                             List<String> j = new ArrayList<>();
+                            System.out.println("Came here");
                             compositeDisposable.add(
                                     Sdk.d2().programModule().programs()
                                             .uid(selectedProgram).get()
                                             .map(program -> {
-
+                                                /*
                                                 String orgUnit = Sdk.d2().trackedEntityModule().trackedEntityInstances()
                                                         .uid(selectedChild).blockingGet().organisationUnit();
-                                                /*
+
+                                                 */
+
                                                 String orgUnit = Sdk.d2().organisationUnitModule().organisationUnits()
                                                         .byProgramUids(Collections.singletonList(selectedProgram))
                                                         .byOrganisationUnitScope(OrganisationUnit.Scope.SCOPE_DATA_CAPTURE)
                                                         .one().blockingGet().uid();
-
-                                                 */
+                                                //System.out.println("org" + orgUnit);
                                                 String enrollmentID = Sdk.d2().enrollmentModule().enrollments()
                                                         .byProgram().eq(selectedProgram)
                                                         .byTrackedEntityInstance().eq(selectedChild)
                                                         .byOrganisationUnit().eq(orgUnit)
                                                         .one().blockingGet().uid();
-
+                                                //System.out.println("OrgUnit: " + orgUnit + " EnrollementID " + enrollmentID);
                                                 //String stage = Sdk.d2().programModule().programStages()
                                                 //        .byProgramUid().eq(program.uid())
                                                 //        .one().blockingGet().uid();
-
                                                 String attrOptionCombo = program.categoryCombo() != null ?
                                                         Sdk.d2().categoryModule().categoryOptionCombos()
                                                                 .byCategoryComboUid().eq(program.categoryComboUid())
@@ -143,21 +146,46 @@ public class EventsActivity extends ListActivity {
                                                         );
                                             })
                                             .map(eventUid ->
-                                                    EventFormActivity.getFormActivityIntent(EventsActivity.this,
-                                                            eventUid,
-                                                            selectedProgram,
-                                                            Sdk.d2().organisationUnitModule().organisationUnits()
-                                                                    .one().blockingGet().uid(),
-                                                            EventFormActivity.FormType.CREATE,
-                                                            selectedChild))
+                                                    {
+                                                        System.out.println("Valencia Came here");
+                                                        if(selectedProgram.equals("hM6Yt9FQL0n"))
+                                                        {
+                                                            return AnthropometryActivity.getFormActivityIntent(
+                                                                    EventsActivity.this,
+                                                                    eventUid,
+                                                                    selectedProgram,
+                                                                    Sdk.d2().organisationUnitModule().organisationUnits()
+                                                                            .one().blockingGet().uid(),
+                                                                    AnthropometryActivity.FormType.CREATE,
+                                                                    selectedChild);
+                                                        }
+                                                        else{
+                                                            return EventFormActivity.getFormActivityIntent(EventsActivity.this,
+                                                                    eventUid,
+                                                                    selectedProgram,
+                                                                    Sdk.d2().organisationUnitModule().organisationUnits()
+                                                                            .one().blockingGet().uid(),
+                                                                    EventFormActivity.FormType.CREATE,
+                                                                    selectedChild);
+                                                        }
+                                                    }
+                                            )
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(
-                                                    activityIntent ->
+                                                    activityIntent -> {
+                                                        if(selectedProgram.equals("pI5JAmTcjE4"))
+                                                        {
+                                                            Toast t = Toast.makeText(getApplicationContext(),
+                                                                    "Anthropometry clicked",
+                                                                    Toast.LENGTH_LONG);
+                                                            t.show();
+                                                        }else
+                                                        {
                                                             ActivityStarter.startActivityForResult(
-                                                                    EventsActivity.this, activityIntent, EVENT_RQ),
-                                                    Throwable::printStackTrace
-                                            ));
+                                                                    EventsActivity.this, activityIntent, EVENT_RQ);
+                                                        }
+                                                    }, Throwable::printStackTrace ));
                         }
                     });
                     builderSingle.show();

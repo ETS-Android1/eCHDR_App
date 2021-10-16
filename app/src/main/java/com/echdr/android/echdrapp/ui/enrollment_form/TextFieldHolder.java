@@ -1,7 +1,9 @@
 package com.echdr.android.echdrapp.ui.enrollment_form;
 
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -52,12 +54,36 @@ class TextFieldHolder extends FieldHolder {
 
         editText.setEnabled(fieldItem.isEditable());
 
+
         editText.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
                 if (!Objects.equals(fieldItem.getValue(), editText.getText().toString()))
                     valueSavedListener.onValueSaved(fieldItem.getUid(), editText.getText().toString());
             }
         });
+
+
+        /*
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!Objects.equals(fieldItem.getValue(), editText.getText().toString()))
+                    valueSavedListener.onValueSaved(fieldItem.getUid(), editText.getText().toString());
+            }
+
+        });
+
+         */
 
 
 

@@ -308,8 +308,7 @@
                             android:id="@+id/ethnicity"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.5"
-                            android:entries="@array/ethnicity">
+                            android:layout_weight="0.5">
 
                         </Spinner>
 
@@ -374,8 +373,7 @@
                             android:id="@+id/relationship"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.5"
-                            android:entries="@array/relationShip">
+                            android:layout_weight="0.5">
 
                         </Spinner>
 
@@ -439,8 +437,7 @@
                             android:id="@+id/occupation"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.5"
-                            android:entries="@array/occupation">
+                            android:layout_weight="0.5">
 
                         </Spinner>
 
@@ -472,8 +469,7 @@
                             android:id="@+id/sector"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.5"
-                            android:entries="@array/sector">
+                            android:layout_weight="0.5">
 
                         </Spinner>
 
@@ -505,8 +501,7 @@
                             android:id="@+id/highestEduLevel"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight="0.5"
-                            android:entries="@array/highestEduLevel">
+                            android:layout_weight="0.5">
 
                         </Spinner>
 
@@ -896,10 +891,10 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:onClick="goToHome"
         android:textSize="18dp"
         android:layout_marginVertical="30dp"
         android:layout_marginHorizontal="60dp"

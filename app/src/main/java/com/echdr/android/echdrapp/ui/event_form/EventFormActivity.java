@@ -67,14 +67,6 @@ import io.reactivex.schedulers.Schedulers;
 
 import static android.text.TextUtils.isEmpty;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-
-
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 public class EventFormActivity extends AppCompatActivity {
 
     private final int CAMERA_RQ = 0;
@@ -92,12 +84,6 @@ public class EventFormActivity extends AppCompatActivity {
     private String programUid;
     private Context context;
     private String selectedChild;
-    private GraphView weightforage;
-    private GraphView heightforage;
-    private GraphView weightforheight;
-    private TextView weightforageLable;
-    private TextView heightforageLable;
-    private String sex;
 
 
     private enum IntentExtra {
@@ -130,11 +116,6 @@ public class EventFormActivity extends AppCompatActivity {
         eventUid = getIntent().getStringExtra(IntentExtra.EVENT_UID.name());
         programUid = getIntent().getStringExtra(IntentExtra.PROGRAM_UID.name());
         selectedChild = getIntent().getStringExtra(IntentExtra.TEI_ID.name());
-        sex = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                .byTrackedEntityInstance().eq(selectedChild)
-                .byTrackedEntityAttribute().eq("lmtzQrlHMYF")
-                .one().blockingGet().value();
-
 
         formType = FormType.valueOf(getIntent().getStringExtra(IntentExtra.TYPE.name()));
 
@@ -143,30 +124,6 @@ public class EventFormActivity extends AppCompatActivity {
         binding.buttonEndTwo.setOnClickListener(this::finishEnrollment);
         binding.buttonValidateTwo.setOnClickListener(this::evaluateProgramIndicators);
         binding.formRecycler.setAdapter(adapter);
-
-        String Anthropometry = Sdk.d2().programModule().programs()
-                .byUid().eq(programUid)
-                .one().blockingGet().displayName();
-        if(Anthropometry.equals("Anthropometry Programme"))
-        {
-            System.out.println("Anthropometry Visibility true");
-            binding.charts.setVisibility(View.VISIBLE);
-
-            binding.charts.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Toast t = Toast.makeText(context, "Hello world", Toast.LENGTH_LONG);
-                    t.show();
-
-                    showCharts();
-
-                }
-            });
-
-
-        }
-
 
         binding.title.setText(
                 Sdk.d2().programModule().programs()
@@ -198,6 +155,7 @@ public class EventFormActivity extends AppCompatActivity {
                     valueRepository.blockingGet().value() : "";
             if (currentValue == null)
                 currentValue = "";
+
 
             try {
                 if (!isEmpty(value)) {
@@ -382,309 +340,6 @@ public class EventFormActivity extends AppCompatActivity {
                     }
                 }
         }
-    }
-
-
-    private void showCharts()
-    {
-        int currentHeight = 0;
-        int currentWeight = 0;
-        int currentAge = 0;
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.bottomsheetlayout);
-
-        weightforage = (GraphView) dialog.findViewById(R.id.weightforage);
-        heightforage = dialog.findViewById(R.id.heightforage);
-        weightforheight = dialog.findViewById(R.id.weightforheight);
-        weightforageLable = dialog.findViewById(R.id.weightforageLabel);
-        heightforageLable = dialog.findViewById(R.id.heightforageLabel);
-
-
-
-        List<TrackedEntityDataValue> t = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
-                .byEvent().eq(eventUid)
-                .blockingGet();
-
-        for(int i=0; i < t.size();i++)
-        {
-            try {
-                if (t.get(i).dataElement().equals("b4Gpl5ayBe3")) {
-                    currentAge = Integer.parseInt(t.get(i).value());
-                } else if (t.get(i).dataElement().equals("cDXlUgg1WiZ")) {
-                    currentHeight = Integer.parseInt(t.get(i).value());
-                } else if (t.get(i).dataElement().equals("rBRI27lvfY5")) {
-                    currentWeight = Integer.parseInt(t.get(i).value());
-                }
-            }catch (Exception e)
-            {
-                Toast.makeText(getApplicationContext(),
-                        "Missing data values",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-
-        dataValuesWHO d = new dataValuesWHO();
-        Map<Integer, double[]> heightDataWHO;
-        Map<Integer, double[]> weightDataWHO;
-        if(sex == "Male")
-        {
-            d.initializeweightForAgeBoys();
-            d.initializeheightForAgeBoys();
-            heightDataWHO = d.getHeightForAgeBoys();
-            weightDataWHO = d.getWeightForAgeBoys();
-
-        }else{
-            d.initializeheightForAgeGirls();
-            d.initializeweightForAgeGirls();
-            heightDataWHO = d.getHeightForAgeGirls();
-            weightDataWHO = d.getWeightForAgeGirls();
-        }
-
-        int heightCategory = 0;
-        try{
-            double [] array = heightDataWHO.get(currentAge);
-            //int i = 0;
-            for(heightCategory=0; heightCategory< 7;)
-            {
-                if (array[heightCategory] < currentHeight)
-                {
-                    heightCategory++;
-                }else
-                {
-                    break;
-                }
-            }
-            heightCategory = heightCategory-1;
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        int weightCategory = 0;
-        try{
-            double [] array = weightDataWHO.get(currentAge);
-            //int i = 0;
-            for(weightCategory=0; weightCategory< 7;)
-            {
-                if (array[weightCategory] < currentWeight)
-                {
-                    weightCategory++;
-                }else
-                {
-                    break;
-                }
-            }
-            weightCategory = weightCategory-1;
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        switch (weightCategory){
-            case -1:
-                weightforageLable.setText("Less than -3SD");
-                weightforageLable.setBackgroundColor(Color.RED);
-                break;
-            case 0:
-                weightforageLable.setText("-2SD to -3SD");
-                weightforageLable.setBackgroundColor(Color.rgb(255, 165, 0));
-                break;
-            case 1:
-                weightforageLable.setText("-1SD to -2SD");
-                weightforageLable.setBackgroundColor(Color.YELLOW);
-                break;
-            case 2:
-                weightforageLable.setText("+1SD to -1SD");
-                weightforageLable.setBackgroundColor(Color.GREEN);
-                break;
-            case 3:
-                weightforageLable.setText("+1SD to +2SD");
-                weightforageLable.setBackgroundColor(Color.YELLOW);
-                break;
-            case 4:
-                weightforageLable.setText("+2SD to +3SD");
-                weightforageLable.setBackgroundColor(Color.rgb(255, 165, 0));
-                break;
-            case 5:
-                weightforageLable.setText("More than +3SD");
-                weightforageLable.setBackgroundColor(Color.RED);
-                break;
-
-        }
-
-        switch (heightCategory){
-            case -1:
-                heightforageLable.setText("Less than -3SD");
-                heightforageLable.setBackgroundColor(Color.RED);
-                break;
-            case 0:
-                heightforageLable.setText("-2SD to -3SD");
-                heightforageLable.setBackgroundColor(Color.rgb(255, 165, 0));
-                break;
-            case 1:
-                heightforageLable.setText("-1SD to -2SD");
-                heightforageLable.setBackgroundColor(Color.YELLOW);
-                break;
-            case 2:
-                heightforageLable.setText("+1SD to -1SD");
-                heightforageLable.setBackgroundColor(Color.GREEN);
-                break;
-            case 3:
-                heightforageLable.setText("+1SD to +2SD");
-                heightforageLable.setBackgroundColor(Color.YELLOW);
-                break;
-            case 4:
-                heightforageLable.setText("+2SD to +3SD");
-                heightforageLable.setBackgroundColor(Color.rgb(255, 165, 0));
-                break;
-            case 5:
-                heightforageLable.setText("More than +3SD");
-                heightforageLable.setBackgroundColor(Color.RED);
-                break;
-
-        }
-
-        LineGraphSeries<DataPoint> weightforage_series = new LineGraphSeries<DataPoint>();
-
-        LineGraphSeries<DataPoint> weightforage_series_double = new LineGraphSeries<DataPoint>();
-        LineGraphSeries<DataPoint> heightforage_series  = new LineGraphSeries<DataPoint>();
-        LineGraphSeries<DataPoint>  weightforheight_series  = new LineGraphSeries<DataPoint>();
-
-        float[] height_list = new float[60];
-        float[] weight_list = new float[60];
-
-        // height repository
-        List<TrackedEntityDataValue> height = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
-                .byDataElement().eq("cDXlUgg1WiZ")
-                .blockingGet();
-
-        // weight repository
-        List<TrackedEntityDataValue> weight = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
-                .byDataElement().eq("rBRI27lvfY5")
-                .blockingGet();
-
-        // Get birthday of the child
-        TrackedEntityAttributeValue data = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
-                .byTrackedEntityInstance().eq(selectedChild)
-                .byTrackedEntityAttribute().eq("qNH202ChkV3")
-                .one().blockingGet();
-
-        System.out.println("Date of birth is " + data.value());
-        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd");
-
-
-        try {
-            Date dob = formatter2.parse(data.value());
-            System.out.println("Date of birth is " + dob);
-
-            for(int i = 0; i < height.size(); i++) {
-
-                //int k = s.compareTo(height.get(i).created());
-                long diffInMillies = Math.abs(height.get(i).created().getTime()
-                        - dob.getTime());
-                // convert to months by dividing days
-                int diff = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)/30;
-
-                height_list[diff] = Float.parseFloat(height.get(i).value());
-            }
-
-            for (int i = 0; i < weight.size(); i++) {
-                //int k = s.compareTo(height.get(i).created());
-                long diffInMillies = Math.abs(height.get(i).created().getTime()
-                        - dob.getTime());
-
-                // convert to months by dividing days
-                int diff = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS)/30;
-
-                weight_list[diff] = Float.parseFloat(weight.get(i).value());
-            }
-
-            // reconstruct weight for age
-            for(int i=0; i< weight.size(); i++)
-            {
-                weightforage_series.appendData(
-                        new DataPoint(i, weight_list[i] ), true, 60);
-            }
-
-            // reconstruct height for age
-            for(int i=0; i< height.size(); i++)
-            {
-                heightforage_series.appendData(
-                        new DataPoint(i, height_list[i] ), true, 60);
-            }
-
-            // reconstruct weight for height
-            /*
-            for(int i=0; i< 60; i++)
-            {
-                heightforage_series.appendData(
-                        new DataPoint(height_list[i] ,
-                                weight_list[i] ), false, 60);
-            }
-             */
-
-            dataValuesWHO e = new dataValuesWHO();
-            e.initializeheightForAgeGirls();
-
-            heightforage.addSeries(heightforage_series);
-
-            heightforage.addSeries(e.heightForAgeGirlsValues(0, height.size()));
-            heightforage.addSeries(e.heightForAgeGirlsValues(1, height.size()));
-            heightforage.addSeries(e.heightForAgeGirlsValues(2, height.size()));
-            heightforage.addSeries(e.heightForAgeGirlsValues(3, height.size()));
-            heightforage.addSeries(e.heightForAgeGirlsValues(4, height.size()));
-            heightforage.addSeries(e.heightForAgeGirlsValues(5, height.size()));
-            heightforage.addSeries(e.heightForAgeGirlsValues(6, height.size()));
-            heightforage.getViewport().setScrollable(true);
-            heightforage.getViewport().setScrollableY(true);
-            heightforage.getViewport().setScalable(true);
-            heightforage.getViewport().setScalableY(true);
-            heightforage.getViewport().setYAxisBoundsManual(true);
-            heightforage.getViewport().setMinY(40);
-            heightforage.getViewport().setMaxY(130);
-            //heightforage.getViewport().setMaxY(130);
-            //weightforheight.addSeries(weightforheight_series);
-
-
-            e.initializeweightForAgeGirls();
-
-            weightforage.addSeries(weightforage_series);
-
-            weightforage.addSeries(e.weightForAgeGirlsValues(0, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(1, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(2, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(3, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(4, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(5, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(6, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(7, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(8, height.size()));
-            weightforage.addSeries(e.weightForAgeGirlsValues(9, height.size()));
-            weightforage.getViewport().setScrollable(true);
-            weightforage.getViewport().setScrollableY(true);
-            weightforage.getViewport().setScalable(true);
-            weightforage.getViewport().setScalableY(true);
-            weightforage.getViewport().setYAxisBoundsManual(true);
-            weightforage.getViewport().setMinY(40);
-            weightforage.getViewport().setMaxY(130);
-            //heightforage.getViewport().setMaxY(130);
-            //weightforheight.addSeries(weightforheight_series);
-
-
-            dialog.show();
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
-            dialog.getWindow().setGravity(Gravity.BOTTOM);
-
-        }
-        catch (Exception error)
-        {
-            System.out.print( "Error in parsing date field: " +  error.toString());
-        }
-
     }
 
 

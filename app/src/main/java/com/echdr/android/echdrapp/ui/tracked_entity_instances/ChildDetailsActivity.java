@@ -21,6 +21,8 @@ import androidx.annotation.Nullable;
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
 import com.echdr.android.echdrapp.data.service.ActivityStarter;
+import com.echdr.android.echdrapp.data.service.forms.EnrollmentFormService;
+import com.echdr.android.echdrapp.data.service.forms.RuleEngineService;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
 import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
 import com.echdr.android.echdrapp.ui.events.EventsActivity;
@@ -28,6 +30,8 @@ import com.echdr.android.echdrapp.ui.events.EventsActivity;
 import org.hisp.dhis.android.core.enrollment.Enrollment;
 import org.hisp.dhis.android.core.maintenance.D2Error;
 import org.hisp.dhis.android.core.option.Option;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValue;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityAttributeValueObjectRepository;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValueObjectRepository;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityInstance;
 
@@ -63,8 +67,11 @@ public class ChildDetailsActivity extends ListActivity {
     private EditText mNumber;
 
     private ImageButton edit_button;
+    private RuleEngineService engineService;
 
     private List<Option> optionList;
+    
+    private Button submitButton;
 
 
 
@@ -119,6 +126,7 @@ public class ChildDetailsActivity extends ListActivity {
         lPhone = findViewById(R.id.lPhone);
         mNumber = findViewById(R.id.mNumber);
         edit_button = findViewById(R.id.edit_btn);
+        submitButton = findViewById(R.id.submit);
 
 
         overweightNotEnrolled = findViewById(R.id.NotEnOverWeight);
@@ -168,6 +176,58 @@ public class ChildDetailsActivity extends ListActivity {
 
         edit_button.setOnClickListener(view ->{
             name.setEnabled(true);
+            address.setEnabled(true);
+            birthHeight.setEnabled(true);
+            birthWeight.setEnabled(true);
+            GN_Area.setEnabled(true);
+            nic.setEnabled(true);
+            mother_name.setEnabled(true);
+            mother_dob.setEnabled(true);
+            numberOfChildren.setEnabled(true);
+            caregiver_name.setEnabled(true);
+            lPhone.setEnabled(true);
+            mNumber.setEnabled(true);
+
+        });
+
+        submitButton.setOnClickListener(view -> {
+            String nameChild = name.getText().toString();
+            String addressChild = address.getText().toString();
+            String birthHeightChild = birthHeight.getText().toString();
+            String birthWeightChild = birthWeight.getText().toString();
+            String ethnicityChild = ethnicity.getSelectedItem().toString();
+            String gnAreaChild = GN_Area.getText().toString();
+            String relationChild = relationship.getSelectedItem().toString();
+            String nationalId = nic.getText().toString();
+            String occupationChild = occupation.getSelectedItem().toString();
+            String sectorChild = sector.getSelectedItem().toString();
+            String highestEdu = highestEduLevel.getSelectedItem().toString();
+            String momName = mother_name.getText().toString();
+            String momDob = mother_dob.getText().toString();
+            String numberOfChil = numberOfChildren.getText().toString();
+            String careName = caregiver_name.getText().toString();
+            String landNumber = lPhone.getText().toString();
+            String mobileNumber = mNumber.getText().toString();
+
+            saveDataElement("zh4hiarsSD5", nameChild);
+            saveDataElement("D9aC5K6C6ne", addressChild);
+            saveDataElement("LpvdWM4YuRq", birthHeightChild);
+            saveDataElement("Fs89NLB2FrA", birthWeightChild);
+            saveDataElement("b9CoAneYYys", ethnicityChild);
+            saveDataElement("upQGjAHBjzu", gnAreaChild);
+            saveDataElement("ghN8XfnlU5V", relationChild);
+            saveDataElement("Gzjb3fp9FSe", nationalId);
+            saveDataElement("Srxv0vniOnf", occupationChild);
+            saveDataElement("igjlkmMF81X", sectorChild);
+            saveDataElement("GMNSaaq4xST", highestEdu);
+            saveDataElement("K7Fxa2wv2Rx", momName);
+            saveDataElement("kYfIkz2M6En", momDob);
+            saveDataElement("Gy4bCBxNuo4", numberOfChil);
+            saveDataElement("hxCXbI5J2YS", careName);
+            saveDataElement("cpcMXDhQouL", landNumber);
+            saveDataElement("LYRf4eIUVuN", mobileNumber);
+
+
         });
 
 
@@ -194,23 +254,28 @@ public class ChildDetailsActivity extends ListActivity {
     }
 
 
-    private void saveDataElement(String dataElement, String fieldUid){
-        TrackedEntityDataValueObjectRepository valueRepository = null;
+    private void saveDataElement(String dataElement, String value){
+        TrackedEntityAttributeValueObjectRepository valueRepository = null;
         try {
-            valueRepository = Sdk.d2().trackedEntityModule().trackedEntityDataValues()
+            valueRepository = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
                     .value(
-                            fieldUid,
-                            dataElement
+                            dataElement,
+                            trackedEntityInstanceUid
+
                     );
         }catch (Exception e)
         {
-
+            System.out.println(e.toString());
         }
+        String currentValue = valueRepository.blockingExists() ?
+                valueRepository.blockingGet().value() : "";
+        if (currentValue == null)
+            currentValue = "";
 
         try{
-            if(!isEmpty(dataElement))
+            if(!isEmpty(value))
             {
-                valueRepository.blockingSet(dataElement);
+                valueRepository.blockingSet(value);
             }else
             {
                 valueRepository.blockingDeleteIfExist();

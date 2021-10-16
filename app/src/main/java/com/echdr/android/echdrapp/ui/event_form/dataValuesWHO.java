@@ -4,17 +4,38 @@ import android.graphics.Color;
 
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.util.HashMap;
 import java.util.Map;
 
+
+
+
 public class dataValuesWHO {
 
-    Map<Integer, double[]> heightForAgeGirls = new HashMap<Integer, double[]>();
-    Map<Integer, double[]> heightForAgeBoys = new HashMap<Integer, double[]>();
-    Map<Integer, double[]> weightForAgeGirls = new HashMap<Integer, double[]>();
-    Map<Integer, double[]> weightForAgeBoys = new HashMap<Integer, double[]>();
+    private static dataValuesWHO instance;
+    Map<Integer, double[]> heightForAgeGirls;
+    Map<Integer, double[]> heightForAgeBoys;
+    Map<Integer, double[]> weightForAgeGirls;
+    Map<Integer, double[]> weightForAgeBoys;
 
+    private dataValuesWHO()
+    {
+        heightForAgeGirls = new HashMap<Integer, double[]>();
+        heightForAgeBoys = new HashMap<Integer, double[]>();
+        weightForAgeGirls = new HashMap<Integer, double[]>();
+        weightForAgeBoys = new HashMap<Integer, double[]>();
+    }
+
+    public static dataValuesWHO getInstance()
+    {
+        if(instance == null)
+        {
+            instance  = new dataValuesWHO();
+        }
+        return instance;
+    }
 
     public void initializeheightForAgeGirls() {
         heightForAgeGirls.put(0, new double[] {43.6,45.4,47.3,49.1,51,52.9,54.7});
@@ -88,8 +109,10 @@ public class dataValuesWHO {
                     new DataPoint(i, heightForAgeGirls.get(i)[pos] ), true, 60);
         }
 
-        heightforage_series.setColor(Color.RED);
+        heightforage_series.setColor(getColor(pos));
         heightforage_series.setThickness(1);
+        heightforage_series.setBackgroundColor(getColor(pos));
+        heightforage_series.setDrawBackground(true);
         return heightforage_series;
     }
 
@@ -119,7 +142,7 @@ public class dataValuesWHO {
         heightForAgeBoys.put(22, new double[] {77.2,80.2,83.1,86,89,91.9,94.9});
         heightForAgeBoys.put(23, new double[] {78,81,83.9,86.9,89.9,92.9,95.9});
         heightForAgeBoys.put(24, new double[] {78.7,81.7,84.8,87.8,90.9,93.9,97});
-        heightForAgeBoys.put(24, new double[] {78,81,84.1,87.1,90.2,93.2,96.3});
+        //heightForAgeBoys.put(24, new double[] {78,81,84.1,87.1,90.2,93.2,96.3});
         heightForAgeBoys.put(25, new double[] {78.6,81.7,84.9,88,91.1,94.2,97.3});
         heightForAgeBoys.put(26, new double[] {79.3,82.5,85.6,88.8,92,95.2,98.3});
         heightForAgeBoys.put(27, new double[] {79.9,83.1,86.4,89.6,92.9,96.1,99.3});
@@ -166,163 +189,169 @@ public class dataValuesWHO {
                     new DataPoint(i, heightForAgeBoys.get(i)[pos] ), true, 60);
         }
 
-        heightforage_series.setColor(Color.RED);
+        heightforage_series.setColor(getColor(pos));
         heightforage_series.setThickness(1);
+        heightforage_series.setBackgroundColor(getColor(pos));
+        heightforage_series.setDrawBackground(true);
         return heightforage_series;
     }
 
     public void initializeweightForAgeGirls() {
-        weightForAgeGirls.put(0, new double[] {0.3809,3.2322,0.14171,2,2.4,2.8,3.2,3.7,4.2,4.8});
-        weightForAgeGirls.put(1, new double[] {0.1714,4.1873,0.13724,2.7,3.2,3.6,4.2,4.8,5.5,6.2});
-        weightForAgeGirls.put(2, new double[] {0.0962,5.1282,0.13,3.4,3.9,4.5,5.1,5.8,6.6,7.5});
-        weightForAgeGirls.put(3, new double[] {0.0402,5.8458,0.12619,4,4.5,5.2,5.8,6.6,7.5,8.5});
-        weightForAgeGirls.put(4, new double[] {-0.005,6.4237,0.12402,4.4,5,5.7,6.4,7.3,8.2,9.3});
-        weightForAgeGirls.put(5, new double[] {-0.043,6.8985,0.12274,4.8,5.4,6.1,6.9,7.8,8.8,10});
-        weightForAgeGirls.put(6, new double[] {-0.0756,7.297,0.12204,5.1,5.7,6.5,7.3,8.2,9.3,10.6});
-        weightForAgeGirls.put(7, new double[] {-0.1039,7.6422,0.12178,5.3,6,6.8,7.6,8.6,9.8,11.1});
-        weightForAgeGirls.put(8, new double[] {-0.1288,7.9487,0.12181,5.6,6.3,7,7.9,9,10.2,11.6});
-        weightForAgeGirls.put(9, new double[] {-0.1507,8.2254,0.12199,5.8,6.5,7.3,8.2,9.3,10.5,12});
-        weightForAgeGirls.put(10, new double[] {-0.17,8.48,0.12223,5.9,6.7,7.5,8.5,9.6,10.9,12.4});
-        weightForAgeGirls.put(11, new double[] {-0.1872,8.7192,0.12247,6.1,6.9,7.7,8.7,9.9,11.2,12.8});
-        weightForAgeGirls.put(12, new double[] {-0.2024,8.9481,0.12268,6.3,7,7.9,8.9,10.1,11.5,13.1});
-        weightForAgeGirls.put(13, new double[] {-0.2158,9.1699,0.12283,6.4,7.2,8.1,9.2,10.4,11.8,13.5});
-        weightForAgeGirls.put(14, new double[] {-0.2278,9.387,0.12294,6.6,7.4,8.3,9.4,10.6,12.1,13.8});
-        weightForAgeGirls.put(15, new double[] {-0.2384,9.6008,0.12299,6.7,7.6,8.5,9.6,10.9,12.4,14.1});
-        weightForAgeGirls.put(16, new double[] {-0.2478,9.8124,0.12303,6.9,7.7,8.7,9.8,11.1,12.6,14.5});
-        weightForAgeGirls.put(17, new double[] {-0.2562,10.0226,0.12306,7,7.9,8.9,10,11.4,12.9,14.8});
-        weightForAgeGirls.put(18, new double[] {-0.2637,10.2315,0.12309,7.2,8.1,9.1,10.2,11.6,13.2,15.1});
-        weightForAgeGirls.put(19, new double[] {-0.2703,10.4393,0.12315,7.3,8.2,9.2,10.4,11.8,13.5,15.4});
-        weightForAgeGirls.put(20, new double[] {-0.2762,10.6464,0.12323,7.5,8.4,9.4,10.6,12.1,13.7,15.7});
-        weightForAgeGirls.put(21, new double[] {-0.2815,10.8534,0.12335,7.6,8.6,9.6,10.9,12.3,14,16});
-        weightForAgeGirls.put(22, new double[] {-0.2862,11.0608,0.1235,7.8,8.7,9.8,11.1,12.5,14.3,16.4});
-        weightForAgeGirls.put(23, new double[] {-0.2903,11.2688,0.12369,7.9,8.9,10,11.3,12.8,14.6,16.7});
-        weightForAgeGirls.put(24, new double[] {-0.2941,11.4775,0.1239,8.1,9,10.2,11.5,13,14.8,17});
-        weightForAgeGirls.put(25, new double[] {-0.2975,11.6864,0.12414,8.2,9.2,10.3,11.7,13.3,15.1,17.3});
-        weightForAgeGirls.put(26, new double[] {-0.3005,11.8947,0.12441,8.4,9.4,10.5,11.9,13.5,15.4,17.7});
-        weightForAgeGirls.put(27, new double[] {-0.3032,12.1015,0.12472,8.5,9.5,10.7,12.1,13.7,15.7,18});
-        weightForAgeGirls.put(28, new double[] {-0.3057,12.3059,0.12506,8.6,9.7,10.9,12.3,14,16,18.3});
-        weightForAgeGirls.put(29, new double[] {-0.308,12.5073,0.12545,8.8,9.8,11.1,12.5,14.2,16.2,18.7});
-        weightForAgeGirls.put(30, new double[] {-0.3101,12.7055,0.12587,8.9,10,11.2,12.7,14.4,16.5,19});
-        weightForAgeGirls.put(31, new double[] {-0.312,12.9006,0.12633,9,10.1,11.4,12.9,14.7,16.8,19.3});
-        weightForAgeGirls.put(32, new double[] {-0.3138,13.093,0.12683,9.1,10.3,11.6,13.1,14.9,17.1,19.6});
-        weightForAgeGirls.put(33, new double[] {-0.3155,13.2837,0.12737,9.3,10.4,11.7,13.3,15.1,17.3,20});
-        weightForAgeGirls.put(34, new double[] {-0.3171,13.4731,0.12794,9.4,10.5,11.9,13.5,15.4,17.6,20.3});
-        weightForAgeGirls.put(35, new double[] {-0.3186,13.6618,0.12855,9.5,10.7,12,13.7,15.6,17.9,20.6});
-        weightForAgeGirls.put(36, new double[] {-0.3201,13.8503,0.12919,9.6,10.8,12.2,13.9,15.8,18.1,20.9});
-        weightForAgeGirls.put(37, new double[] {-0.3216,14.0385,0.12988,9.7,10.9,12.4,14,16,18.4,21.3});
-        weightForAgeGirls.put(38, new double[] {-0.323,14.2265,0.13059,9.8,11.1,12.5,14.2,16.3,18.7,21.6});
-        weightForAgeGirls.put(39, new double[] {-0.3243,14.414,0.13135,9.9,11.2,12.7,14.4,16.5,19,22});
-        weightForAgeGirls.put(40, new double[] {-0.3257,14.601,0.13213,10.1,11.3,12.8,14.6,16.7,19.2,22.3});
-        weightForAgeGirls.put(41, new double[] {-0.327,14.7873,0.13293,10.2,11.5,13,14.8,16.9,19.5,22.7});
-        weightForAgeGirls.put(42, new double[] {-0.3283,14.9727,0.13376,10.3,11.6,13.1,15,17.2,19.8,23});
-        weightForAgeGirls.put(43, new double[] {-0.3296,15.1573,0.1346,10.4,11.7,13.3,15.2,17.4,20.1,23.4});
-        weightForAgeGirls.put(44, new double[] {-0.3309,15.341,0.13545,10.5,11.8,13.4,15.3,17.6,20.4,23.7});
-        weightForAgeGirls.put(45, new double[] {-0.3322,15.524,0.1363,10.6,12,13.6,15.5,17.8,20.7,24.1});
-        weightForAgeGirls.put(46, new double[] {-0.3335,15.7064,0.13716,10.7,12.1,13.7,15.7,18.1,20.9,24.5});
-        weightForAgeGirls.put(47, new double[] {-0.3348,15.8882,0.138,10.8,12.2,13.9,15.9,18.3,21.2,24.8});
-        weightForAgeGirls.put(48, new double[] {-0.3361,16.0697,0.13884,10.9,12.3,14,16.1,18.5,21.5,25.2});
-        weightForAgeGirls.put(49, new double[] {-0.3374,16.2511,0.13968,11,12.4,14.2,16.3,18.8,21.8,25.5});
-        weightForAgeGirls.put(50, new double[] {-0.3387,16.4322,0.14051,11.1,12.6,14.3,16.4,19,22.1,25.9});
-        weightForAgeGirls.put(51, new double[] {-0.34,16.6133,0.14132,11.2,12.7,14.5,16.6,19.2,22.4,26.3});
-        weightForAgeGirls.put(52, new double[] {-0.3414,16.7942,0.14213,11.3,12.8,14.6,16.8,19.4,22.6,26.6});
-        weightForAgeGirls.put(53, new double[] {-0.3427,16.9748,0.14293,11.4,12.9,14.8,17,19.7,22.9,27});
-        weightForAgeGirls.put(54, new double[] {-0.344,17.1551,0.14371,11.5,13,14.9,17.2,19.9,23.2,27.4});
-        weightForAgeGirls.put(55, new double[] {-0.3453,17.3347,0.14448,11.6,13.2,15.1,17.3,20.1,23.5,27.7});
-        weightForAgeGirls.put(56, new double[] {-0.3466,17.5136,0.14525,11.7,13.3,15.2,17.5,20.3,23.8,28.1});
-        weightForAgeGirls.put(57, new double[] {-0.3479,17.6916,0.146,11.8,13.4,15.3,17.7,20.6,24.1,28.5});
-        weightForAgeGirls.put(58, new double[] {-0.3492,17.8686,0.14675,11.9,13.5,15.5,17.9,20.8,24.4,28.8});
-        weightForAgeGirls.put(59, new double[] {-0.3505,18.0445,0.14748,12,13.6,15.6,18,21,24.6,29.2});
-        weightForAgeGirls.put(60, new double[] {-0.3518,18.2193,0.14821,12.1,13.7,15.8,18.2,21.2,24.9,29.5});
+        weightForAgeGirls.put(0, new double[] {2,2.4,2.8,3.2,3.7,4.2,4.8});
+        weightForAgeGirls.put(1, new double[] {2.7,3.2,3.6,4.2,4.8,5.5,6.2});
+        weightForAgeGirls.put(2, new double[] {3.4,3.9,4.5,5.1,5.8,6.6,7.5});
+        weightForAgeGirls.put(3, new double[] {4,4.5,5.2,5.8,6.6,7.5,8.5});
+        weightForAgeGirls.put(4, new double[] {4.4,5,5.7,6.4,7.3,8.2,9.3});
+        weightForAgeGirls.put(5, new double[] {4.8,5.4,6.1,6.9,7.8,8.8,10});
+        weightForAgeGirls.put(6, new double[] {5.1,5.7,6.5,7.3,8.2,9.3,10.6});
+        weightForAgeGirls.put(7, new double[] {5.3,6,6.8,7.6,8.6,9.8,11.1});
+        weightForAgeGirls.put(8, new double[] {5.6,6.3,7,7.9,9,10.2,11.6});
+        weightForAgeGirls.put(9, new double[] {5.8,6.5,7.3,8.2,9.3,10.5,12});
+        weightForAgeGirls.put(10, new double[] {5.9,6.7,7.5,8.5,9.6,10.9,12.4});
+        weightForAgeGirls.put(11, new double[] {6.1,6.9,7.7,8.7,9.9,11.2,12.8});
+        weightForAgeGirls.put(12, new double[] {6.3,7,7.9,8.9,10.1,11.5,13.1});
+        weightForAgeGirls.put(13, new double[] {6.4,7.2,8.1,9.2,10.4,11.8,13.5});
+        weightForAgeGirls.put(14, new double[] {6.6,7.4,8.3,9.4,10.6,12.1,13.8});
+        weightForAgeGirls.put(15, new double[] {6.7,7.6,8.5,9.6,10.9,12.4,14.1});
+        weightForAgeGirls.put(16, new double[] {6.9,7.7,8.7,9.8,11.1,12.6,14.5});
+        weightForAgeGirls.put(17, new double[] {7,7.9,8.9,10,11.4,12.9,14.8});
+        weightForAgeGirls.put(18, new double[] {7.2,8.1,9.1,10.2,11.6,13.2,15.1});
+        weightForAgeGirls.put(19, new double[] {7.3,8.2,9.2,10.4,11.8,13.5,15.4});
+        weightForAgeGirls.put(20, new double[] {7.5,8.4,9.4,10.6,12.1,13.7,15.7});
+        weightForAgeGirls.put(21, new double[] {7.6,8.6,9.6,10.9,12.3,14,16});
+        weightForAgeGirls.put(22, new double[] {7.8,8.7,9.8,11.1,12.5,14.3,16.4});
+        weightForAgeGirls.put(23, new double[] {7.9,8.9,10,11.3,12.8,14.6,16.7});
+        weightForAgeGirls.put(24, new double[] {8.1,9,10.2,11.5,13,14.8,17});
+        weightForAgeGirls.put(25, new double[] {8.2,9.2,10.3,11.7,13.3,15.1,17.3});
+        weightForAgeGirls.put(26, new double[] {8.4,9.4,10.5,11.9,13.5,15.4,17.7});
+        weightForAgeGirls.put(27, new double[] {8.5,9.5,10.7,12.1,13.7,15.7,18});
+        weightForAgeGirls.put(28, new double[] {8.6,9.7,10.9,12.3,14,16,18.3});
+        weightForAgeGirls.put(29, new double[] {8.8,9.8,11.1,12.5,14.2,16.2,18.7});
+        weightForAgeGirls.put(30, new double[] {8.9,10,11.2,12.7,14.4,16.5,19});
+        weightForAgeGirls.put(31, new double[] {9,10.1,11.4,12.9,14.7,16.8,19.3});
+        weightForAgeGirls.put(32, new double[] {9.1,10.3,11.6,13.1,14.9,17.1,19.6});
+        weightForAgeGirls.put(33, new double[] {9.3,10.4,11.7,13.3,15.1,17.3,20});
+        weightForAgeGirls.put(34, new double[] {9.4,10.5,11.9,13.5,15.4,17.6,20.3});
+        weightForAgeGirls.put(35, new double[] {9.5,10.7,12,13.7,15.6,17.9,20.6});
+        weightForAgeGirls.put(36, new double[] {9.6,10.8,12.2,13.9,15.8,18.1,20.9});
+        weightForAgeGirls.put(37, new double[] {9.7,10.9,12.4,14,16,18.4,21.3});
+        weightForAgeGirls.put(38, new double[] {9.8,11.1,12.5,14.2,16.3,18.7,21.6});
+        weightForAgeGirls.put(39, new double[] {9.9,11.2,12.7,14.4,16.5,19,22});
+        weightForAgeGirls.put(40, new double[] {10.1,11.3,12.8,14.6,16.7,19.2,22.3});
+        weightForAgeGirls.put(41, new double[] {10.2,11.5,13,14.8,16.9,19.5,22.7});
+        weightForAgeGirls.put(42, new double[] {10.3,11.6,13.1,15,17.2,19.8,23});
+        weightForAgeGirls.put(43, new double[] {10.4,11.7,13.3,15.2,17.4,20.1,23.4});
+        weightForAgeGirls.put(44, new double[] {10.5,11.8,13.4,15.3,17.6,20.4,23.7});
+        weightForAgeGirls.put(45, new double[] {10.6,12,13.6,15.5,17.8,20.7,24.1});
+        weightForAgeGirls.put(46, new double[] {10.7,12.1,13.7,15.7,18.1,20.9,24.5});
+        weightForAgeGirls.put(47, new double[] {10.8,12.2,13.9,15.9,18.3,21.2,24.8});
+        weightForAgeGirls.put(48, new double[] {10.9,12.3,14,16.1,18.5,21.5,25.2});
+        weightForAgeGirls.put(49, new double[] {11,12.4,14.2,16.3,18.8,21.8,25.5});
+        weightForAgeGirls.put(50, new double[] {11.1,12.6,14.3,16.4,19,22.1,25.9});
+        weightForAgeGirls.put(51, new double[] {11.2,12.7,14.5,16.6,19.2,22.4,26.3});
+        weightForAgeGirls.put(52, new double[] {11.3,12.8,14.6,16.8,19.4,22.6,26.6});
+        weightForAgeGirls.put(53, new double[] {11.4,12.9,14.8,17,19.7,22.9,27});
+        weightForAgeGirls.put(54, new double[] {11.5,13,14.9,17.2,19.9,23.2,27.4});
+        weightForAgeGirls.put(55, new double[] {11.6,13.2,15.1,17.3,20.1,23.5,27.7});
+        weightForAgeGirls.put(56, new double[] {11.7,13.3,15.2,17.5,20.3,23.8,28.1});
+        weightForAgeGirls.put(57, new double[] {11.8,13.4,15.3,17.7,20.6,24.1,28.5});
+        weightForAgeGirls.put(58, new double[] {11.9,13.5,15.5,17.9,20.8,24.4,28.8});
+        weightForAgeGirls.put(59, new double[] {12,13.6,15.6,18,21,24.6,29.2});
+        weightForAgeGirls.put(60, new double[] {12.1,13.7,15.8,18.2,21.2,24.9,29.5});
     }
 
     public LineGraphSeries<DataPoint> weightForAgeGirlsValues(int pos, int maxMonth) {
-        LineGraphSeries<DataPoint> heightforage_series = new LineGraphSeries<DataPoint>();
+        LineGraphSeries<DataPoint> weightforage_series = new LineGraphSeries<DataPoint>();
         for(int i=0; i< maxMonth; i++)
         {
-            heightforage_series.appendData(
+            weightforage_series.appendData(
                     new DataPoint(i, weightForAgeGirls.get(i)[pos] ), true, 60);
         }
 
-        heightforage_series.setColor(Color.RED);
-        heightforage_series.setThickness(1);
-        return heightforage_series;
+        weightforage_series.setColor(getColor(pos));
+        weightforage_series.setThickness(1);
+        weightforage_series.setBackgroundColor(getColor(pos));
+        weightforage_series.setDrawBackground(true);
+        return weightforage_series;
     }
 
     public void initializeweightForAgeBoys() {
-        weightForAgeBoys.put(0, new double[] {0.3487,3.3464,0.14602,2.1,2.5,2.9,3.3,3.9,4.4,5});
-        weightForAgeBoys.put(1, new double[] {0.2297,4.4709,0.13395,2.9,3.4,3.9,4.5,5.1,5.8,6.6});
-        weightForAgeBoys.put(2, new double[] {0.197,5.5675,0.12385,3.8,4.3,4.9,5.6,6.3,7.1,8});
-        weightForAgeBoys.put(3, new double[] {0.1738,6.3762,0.11727,4.4,5,5.7,6.4,7.2,8,9});
-        weightForAgeBoys.put(4, new double[] {0.1553,7.0023,0.11316,4.9,5.6,6.2,7,7.8,8.7,9.7});
-        weightForAgeBoys.put(5, new double[] {0.1395,7.5105,0.1108,5.3,6,6.7,7.5,8.4,9.3,10.4});
-        weightForAgeBoys.put(6, new double[] {0.1257,7.934,0.10958,5.7,6.4,7.1,7.9,8.8,9.8,10.9});
-        weightForAgeBoys.put(7, new double[] {0.1134,8.297,0.10902,5.9,6.7,7.4,8.3,9.2,10.3,11.4});
-        weightForAgeBoys.put(8, new double[] {0.1021,8.6151,0.10882,6.2,6.9,7.7,8.6,9.6,10.7,11.9});
-        weightForAgeBoys.put(9, new double[] {0.0917,8.9014,0.10881,6.4,7.1,8,8.9,9.9,11,12.3});
-        weightForAgeBoys.put(10, new double[] {0.082,9.1649,0.10891,6.6,7.4,8.2,9.2,10.2,11.4,12.7});
-        weightForAgeBoys.put(11, new double[] {0.073,9.4122,0.10906,6.8,7.6,8.4,9.4,10.5,11.7,13});
-        weightForAgeBoys.put(12, new double[] {0.0644,9.6479,0.10925,6.9,7.7,8.6,9.6,10.8,12,13.3});
-        weightForAgeBoys.put(13, new double[] {0.0563,9.8749,0.10949,7.1,7.9,8.8,9.9,11,12.3,13.7});
-        weightForAgeBoys.put(14, new double[] {0.0487,10.0953,0.10976,7.2,8.1,9,10.1,11.3,12.6,14});
-        weightForAgeBoys.put(15, new double[] {0.0413,10.3108,0.11007,7.4,8.3,9.2,10.3,11.5,12.8,14.3});
-        weightForAgeBoys.put(16, new double[] {0.0343,10.5228,0.11041,7.5,8.4,9.4,10.5,11.7,13.1,14.6});
-        weightForAgeBoys.put(17, new double[] {0.0275,10.7319,0.11079,7.7,8.6,9.6,10.7,12,13.4,14.9});
-        weightForAgeBoys.put(18, new double[] {0.0211,10.9385,0.11119,7.8,8.8,9.8,10.9,12.2,13.7,15.3});
-        weightForAgeBoys.put(19, new double[] {0.0148,11.143,0.11164,8,8.9,10,11.1,12.5,13.9,15.6});
-        weightForAgeBoys.put(20, new double[] {0.0087,11.3462,0.11211,8.1,9.1,10.1,11.3,12.7,14.2,15.9});
-        weightForAgeBoys.put(21, new double[] {0.0029,11.5486,0.11261,8.2,9.2,10.3,11.5,12.9,14.5,16.2});
-        weightForAgeBoys.put(22, new double[] {-0.0028,11.7504,0.11314,8.4,9.4,10.5,11.8,13.2,14.7,16.5});
-        weightForAgeBoys.put(23, new double[] {-0.0083,11.9514,0.11369,8.5,9.5,10.7,12,13.4,15,16.8});
-        weightForAgeBoys.put(24, new double[] {-0.0137,12.1515,0.11426,8.6,9.7,10.8,12.2,13.6,15.3,17.1});
-        weightForAgeBoys.put(25, new double[] {-0.0189,12.3502,0.11485,8.8,9.8,11,12.4,13.9,15.5,17.5});
-        weightForAgeBoys.put(26, new double[] {-0.024,12.5466,0.11544,8.9,10,11.2,12.5,14.1,15.8,17.8});
-        weightForAgeBoys.put(27, new double[] {-0.0289,12.7401,0.11604,9,10.1,11.3,12.7,14.3,16.1,18.1});
-        weightForAgeBoys.put(28, new double[] {-0.0337,12.9303,0.11664,9.1,10.2,11.5,12.9,14.5,16.3,18.4});
-        weightForAgeBoys.put(29, new double[] {-0.0385,13.1169,0.11723,9.2,10.4,11.7,13.1,14.8,16.6,18.7});
-        weightForAgeBoys.put(30, new double[] {-0.0431,13.3,0.11781,9.4,10.5,11.8,13.3,15,16.9,19});
-        weightForAgeBoys.put(31, new double[] {-0.0476,13.4798,0.11839,9.5,10.7,12,13.5,15.2,17.1,19.3});
-        weightForAgeBoys.put(32, new double[] {-0.052,13.6567,0.11896,9.6,10.8,12.1,13.7,15.4,17.4,19.6});
-        weightForAgeBoys.put(33, new double[] {-0.0564,13.8309,0.11953,9.7,10.9,12.3,13.8,15.6,17.6,19.9});
-        weightForAgeBoys.put(34, new double[] {-0.0606,14.0031,0.12008,9.8,11,12.4,14,15.8,17.8,20.2});
-        weightForAgeBoys.put(35, new double[] {-0.0648,14.1736,0.12062,9.9,11.2,12.6,14.2,16,18.1,20.4});
-        weightForAgeBoys.put(36, new double[] {-0.0689,14.3429,0.12116,10,11.3,12.7,14.3,16.2,18.3,20.7});
-        weightForAgeBoys.put(37, new double[] {-0.0729,14.5113,0.12168,10.1,11.4,12.9,14.5,16.4,18.6,21});
-        weightForAgeBoys.put(38, new double[] {-0.0769,14.6791,0.1222,10.2,11.5,13,14.7,16.6,18.8,21.3});
-        weightForAgeBoys.put(39, new double[] {-0.0808,14.8466,0.12271,10.3,11.6,13.1,14.8,16.8,19,21.6});
-        weightForAgeBoys.put(40, new double[] {-0.0846,15.014,0.12322,10.4,11.8,13.3,15,17,19.3,21.9});
-        weightForAgeBoys.put(41, new double[] {-0.0883,15.1813,0.12373,10.5,11.9,13.4,15.2,17.2,19.5,22.1});
-        weightForAgeBoys.put(42, new double[] {-0.092,15.3486,0.12425,10.6,12,13.6,15.3,17.4,19.7,22.4});
-        weightForAgeBoys.put(43, new double[] {-0.0957,15.5158,0.12478,10.7,12.1,13.7,15.5,17.6,20,22.7});
-        weightForAgeBoys.put(44, new double[] {-0.0993,15.6828,0.12531,10.8,12.2,13.8,15.7,17.8,20.2,23});
-        weightForAgeBoys.put(45, new double[] {-0.1028,15.8497,0.12586,10.9,12.4,14,15.8,18,20.5,23.3});
-        weightForAgeBoys.put(46, new double[] {-0.1063,16.0163,0.12643,11,12.5,14.1,16,18.2,20.7,23.6});
-        weightForAgeBoys.put(47, new double[] {-0.1097,16.1827,0.127,11.1,12.6,14.3,16.2,18.4,20.9,23.9});
-        weightForAgeBoys.put(48, new double[] {-0.1131,16.3489,0.12759,11.2,12.7,14.4,16.3,18.6,21.2,24.2});
-        weightForAgeBoys.put(49, new double[] {-0.1165,16.515,0.12819,11.3,12.8,14.5,16.5,18.8,21.4,24.5});
-        weightForAgeBoys.put(50, new double[] {-0.1198,16.6811,0.1288,11.4,12.9,14.7,16.7,19,21.7,24.8});
-        weightForAgeBoys.put(51, new double[] {-0.123,16.8471,0.12943,11.5,13.1,14.8,16.8,19.2,21.9,25.1});
-        weightForAgeBoys.put(52, new double[] {-0.1262,17.0132,0.13005,11.6,13.2,15,17,19.4,22.2,25.4});
-        weightForAgeBoys.put(53, new double[] {-0.1294,17.1792,0.13069,11.7,13.3,15.1,17.2,19.6,22.4,25.7});
-        weightForAgeBoys.put(54, new double[] {-0.1325,17.3452,0.13133,11.8,13.4,15.2,17.3,19.8,22.7,26});
-        weightForAgeBoys.put(55, new double[] {-0.1356,17.5111,0.13197,11.9,13.5,15.4,17.5,20,22.9,26.3});
-        weightForAgeBoys.put(56, new double[] {-0.1387,17.6768,0.13261,12,13.6,15.5,17.7,20.2,23.2,26.6});
-        weightForAgeBoys.put(57, new double[] {-0.1417,17.8422,0.13325,12.1,13.7,15.6,17.8,20.4,23.4,26.9});
-        weightForAgeBoys.put(58, new double[] {-0.1447,18.0073,0.13389,12.2,13.8,15.8,18,20.6,23.7,27.2});
-        weightForAgeBoys.put(59, new double[] {-0.1477,18.1722,0.13453,12.3,14,15.9,18.2,20.8,23.9,27.6});
-        weightForAgeBoys.put(60, new double[] {-0.1506,18.3366,0.13517,12.4,14.1,16,18.3,21,24.2,27.9});
+        weightForAgeBoys.put(0, new double[] {2.1,2.5,2.9,3.3,3.9,4.4,5});
+        weightForAgeBoys.put(1, new double[] {2.9,3.4,3.9,4.5,5.1,5.8,6.6});
+        weightForAgeBoys.put(2, new double[] {3.8,4.3,4.9,5.6,6.3,7.1,8});
+        weightForAgeBoys.put(3, new double[] {4.4,5,5.7,6.4,7.2,8,9});
+        weightForAgeBoys.put(4, new double[] {4.9,5.6,6.2,7,7.8,8.7,9.7});
+        weightForAgeBoys.put(5, new double[] {5.3,6,6.7,7.5,8.4,9.3,10.4});
+        weightForAgeBoys.put(6, new double[] {5.7,6.4,7.1,7.9,8.8,9.8,10.9});
+        weightForAgeBoys.put(7, new double[] {5.9,6.7,7.4,8.3,9.2,10.3,11.4});
+        weightForAgeBoys.put(8, new double[] {6.2,6.9,7.7,8.6,9.6,10.7,11.9});
+        weightForAgeBoys.put(9, new double[] {6.4,7.1,8,8.9,9.9,11,12.3});
+        weightForAgeBoys.put(10, new double[] {6.6,7.4,8.2,9.2,10.2,11.4,12.7});
+        weightForAgeBoys.put(11, new double[] {6.8,7.6,8.4,9.4,10.5,11.7,13});
+        weightForAgeBoys.put(12, new double[] {6.9,7.7,8.6,9.6,10.8,12,13.3});
+        weightForAgeBoys.put(13, new double[] {7.1,7.9,8.8,9.9,11,12.3,13.7});
+        weightForAgeBoys.put(14, new double[] {7.2,8.1,9,10.1,11.3,12.6,14});
+        weightForAgeBoys.put(15, new double[] {7.4,8.3,9.2,10.3,11.5,12.8,14.3});
+        weightForAgeBoys.put(16, new double[] {7.5,8.4,9.4,10.5,11.7,13.1,14.6});
+        weightForAgeBoys.put(17, new double[] {7.7,8.6,9.6,10.7,12,13.4,14.9});
+        weightForAgeBoys.put(18, new double[] {7.8,8.8,9.8,10.9,12.2,13.7,15.3});
+        weightForAgeBoys.put(19, new double[] {8,8.9,10,11.1,12.5,13.9,15.6});
+        weightForAgeBoys.put(20, new double[] {8.1,9.1,10.1,11.3,12.7,14.2,15.9});
+        weightForAgeBoys.put(21, new double[] {8.2,9.2,10.3,11.5,12.9,14.5,16.2});
+        weightForAgeBoys.put(22, new double[] {8.4,9.4,10.5,11.8,13.2,14.7,16.5});
+        weightForAgeBoys.put(23, new double[] {8.5,9.5,10.7,12,13.4,15,16.8});
+        weightForAgeBoys.put(24, new double[] {8.6,9.7,10.8,12.2,13.6,15.3,17.1});
+        weightForAgeBoys.put(25, new double[] {8.8,9.8,11,12.4,13.9,15.5,17.5});
+        weightForAgeBoys.put(26, new double[] {8.9,10,11.2,12.5,14.1,15.8,17.8});
+        weightForAgeBoys.put(27, new double[] {9,10.1,11.3,12.7,14.3,16.1,18.1});
+        weightForAgeBoys.put(28, new double[] {9.1,10.2,11.5,12.9,14.5,16.3,18.4});
+        weightForAgeBoys.put(29, new double[] {9.2,10.4,11.7,13.1,14.8,16.6,18.7});
+        weightForAgeBoys.put(30, new double[] {9.4,10.5,11.8,13.3,15,16.9,19});
+        weightForAgeBoys.put(31, new double[] {9.5,10.7,12,13.5,15.2,17.1,19.3});
+        weightForAgeBoys.put(32, new double[] {9.6,10.8,12.1,13.7,15.4,17.4,19.6});
+        weightForAgeBoys.put(33, new double[] {9.7,10.9,12.3,13.8,15.6,17.6,19.9});
+        weightForAgeBoys.put(34, new double[] {9.8,11,12.4,14,15.8,17.8,20.2});
+        weightForAgeBoys.put(35, new double[] {9.9,11.2,12.6,14.2,16,18.1,20.4});
+        weightForAgeBoys.put(36, new double[] {10,11.3,12.7,14.3,16.2,18.3,20.7});
+        weightForAgeBoys.put(37, new double[] {10.1,11.4,12.9,14.5,16.4,18.6,21});
+        weightForAgeBoys.put(38, new double[] {10.2,11.5,13,14.7,16.6,18.8,21.3});
+        weightForAgeBoys.put(39, new double[] {10.3,11.6,13.1,14.8,16.8,19,21.6});
+        weightForAgeBoys.put(40, new double[] {10.4,11.8,13.3,15,17,19.3,21.9});
+        weightForAgeBoys.put(41, new double[] {10.5,11.9,13.4,15.2,17.2,19.5,22.1});
+        weightForAgeBoys.put(42, new double[] {10.6,12,13.6,15.3,17.4,19.7,22.4});
+        weightForAgeBoys.put(43, new double[] {10.7,12.1,13.7,15.5,17.6,20,22.7});
+        weightForAgeBoys.put(44, new double[] {10.8,12.2,13.8,15.7,17.8,20.2,23});
+        weightForAgeBoys.put(45, new double[] {10.9,12.4,14,15.8,18,20.5,23.3});
+        weightForAgeBoys.put(46, new double[] {11,12.5,14.1,16,18.2,20.7,23.6});
+        weightForAgeBoys.put(47, new double[] {11.1,12.6,14.3,16.2,18.4,20.9,23.9});
+        weightForAgeBoys.put(48, new double[] {11.2,12.7,14.4,16.3,18.6,21.2,24.2});
+        weightForAgeBoys.put(49, new double[] {11.3,12.8,14.5,16.5,18.8,21.4,24.5});
+        weightForAgeBoys.put(50, new double[] {11.4,12.9,14.7,16.7,19,21.7,24.8});
+        weightForAgeBoys.put(51, new double[] {11.5,13.1,14.8,16.8,19.2,21.9,25.1});
+        weightForAgeBoys.put(52, new double[] {11.6,13.2,15,17,19.4,22.2,25.4});
+        weightForAgeBoys.put(53, new double[] {11.7,13.3,15.1,17.2,19.6,22.4,25.7});
+        weightForAgeBoys.put(54, new double[] {11.8,13.4,15.2,17.3,19.8,22.7,26});
+        weightForAgeBoys.put(55, new double[] {11.9,13.5,15.4,17.5,20,22.9,26.3});
+        weightForAgeBoys.put(56, new double[] {12,13.6,15.5,17.7,20.2,23.2,26.6});
+        weightForAgeBoys.put(57, new double[] {12.1,13.7,15.6,17.8,20.4,23.4,26.9});
+        weightForAgeBoys.put(58, new double[] {12.2,13.8,15.8,18,20.6,23.7,27.2});
+        weightForAgeBoys.put(59, new double[] {12.3,14,15.9,18.2,20.8,23.9,27.6});
+        weightForAgeBoys.put(60, new double[] {12.4,14.1,16,18.3,21,24.2,27.9});
     }
 
     public LineGraphSeries<DataPoint> weightForAgeBoys(int pos, int maxMonth) {
-        LineGraphSeries<DataPoint> heightforage_series = new LineGraphSeries<DataPoint>();
+        LineGraphSeries<DataPoint> weightforage_series = new LineGraphSeries<DataPoint>();
         for(int i=0; i< maxMonth; i++)
         {
-            heightforage_series.appendData(
+            weightforage_series.appendData(
                     new DataPoint(i, weightForAgeBoys.get(i)[pos] ), true, 60);
         }
 
-        heightforage_series.setColor(Color.RED);
-        heightforage_series.setThickness(1);
-        return heightforage_series;
+        weightforage_series.setColor(getColor(pos));
+        weightforage_series.setThickness(1);
+        weightforage_series.setBackgroundColor(getColor(pos));
+        weightforage_series.setDrawBackground(true);
+        return weightforage_series;
     }
 
     public Map<Integer, double[]> getHeightForAgeGirls() {
@@ -340,4 +369,29 @@ public class dataValuesWHO {
     public Map<Integer, double[]> getWeightForAgeBoys() {
         return weightForAgeBoys;
     }
+
+    private int getColor(int pos)
+    {
+        int color = Color.RED;
+        switch(pos)
+        {
+            case 0 :
+            case 6 :
+                color = Color.RED;
+                break;
+            case 1 :
+            case 5 :
+                color = Color.rgb(255, 165, 0);
+                break;
+            case 2 :
+            case 4 :
+                color = Color.YELLOW;
+                break;
+            case 3 :
+                color = Color.GREEN;
+                break;
+        }
+        return color;
+    }
+
 }

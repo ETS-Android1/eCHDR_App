@@ -15,6 +15,7 @@ import com.echdr.android.echdrapp.data.service.ActivityStarter;
 import com.echdr.android.echdrapp.data.service.DateFormatHelper;
 import com.echdr.android.echdrapp.ui.base.DiffByIdItemCallback;
 import com.echdr.android.echdrapp.ui.base.ListItemWithSyncHolder;
+import com.echdr.android.echdrapp.ui.event_form.AnthropometryActivity;
 import com.echdr.android.echdrapp.ui.event_form.EventFormActivity;
 import com.echdr.android.echdrapp.ui.tracker_import_conflicts.TrackerImportConflictsAdapter;
 
@@ -74,17 +75,33 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
         setConflicts(event.uid(), holder);
 
         holder.itemView.setOnClickListener(view->{
-            ActivityStarter.startActivity(
-                    activity,
-                    EventFormActivity.getFormActivityIntent(
-                            activity,
-                            event.uid(),
-                            event.program(),
-                            event.organisationUnit(),
-                            EventFormActivity.FormType.CHECK,
-                            selectedChild
-                    ),false
-            );
+
+            if(event.program().equals("hM6Yt9FQL0n"))
+            {
+                ActivityStarter.startActivity(activity,
+                        AnthropometryActivity.getFormActivityIntent(
+                                activity,
+                                event.uid(),
+                                event.program(),
+                                event.organisationUnit(),
+                                AnthropometryActivity.FormType.CHECK,
+                                selectedChild
+                        ), false
+                );
+            }
+            else {
+                ActivityStarter.startActivity(
+                        activity,
+                        EventFormActivity.getFormActivityIntent(
+                                activity,
+                                event.uid(),
+                                event.program(),
+                                event.organisationUnit(),
+                                EventFormActivity.FormType.CHECK,
+                                selectedChild
+                        ), false
+                );
+            }
         });
     }
 

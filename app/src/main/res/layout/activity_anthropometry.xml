@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.event_form.AnthropometryActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="5dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <EditText
+            android:id="@+id/anthropometryHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="enter height here"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/anthropometryWeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="enter weight here"
+            android:inputType="text" />
+
+
+        <Button
+            android:id="@+id/plotGraph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Plot graphs"
+            android:layout_gravity="end"
+            >
+        </Button>>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Weight for age"
+            android:textAlignment="center" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/weightforageAnthropometry"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Height for age"
+            android:textAlignment="center" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/heightforageAnthropometry"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/anthropometrySave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:clickable="true"
+        android:visibility="visible"
+        app:backgroundTint="@color/title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_baseline_save_24" />
+</androidx.constraintlayout.widget.ConstraintLayout>
